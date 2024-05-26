@@ -1,0 +1,56 @@
+{
+  "chat": {
+    "description": "role_name: AI name in Chat, your_name: Your Name in Chat, role: Assignment of a role for the AI",
+    "role_name": "Assistent",
+    "your_name": "James",
+    "role": ""
+  },
+  "brain": {
+    "active": "ollama",
+    "ollama": {
+      "url": "http://localhost:11434",
+      "model": "llama3:8b",
+      "keep_alive": "60m"
+    },
+    "chatgpt": {
+      "api_key": "sk-proj-xxx"
+    }
+  },
+  "stt": {
+    "active": "google",
+    "whisper_local": {
+      "description": "tiny, base, small, medium, large-v3",
+      "location": "models/Whisper/",
+      "model": "medium",
+      "gpu": true,
+      "language": "de"
+    },
+    "whisper": {
+      "description": "de, en, es, ...",
+      "language": "de"
+    },
+    "google": {
+      "description": "de-DE, en-US, es-ES, ...",
+      "language": "de-DE"
+    }
+  },
+  "tts": {
+    "active": "xtts",
+    "google": {
+      "description": "For language: de, en, es-es, ...",
+      "language": "de",
+      "amount_input_sentences": 3
+    },
+    "xtts": {
+      "location": "models/XTTS-v2",
+      "voice": "marvin",
+      "amount_input_sentences": 4
+    },
+    "piper": {
+      "location": "models/Piper",
+      "description": "Streaming for Piper is not implemented yet. So best for amount_input_sentences ist 1",
+      "voice": "default_german_voice",
+      "amount_input_sentences": 1
+    }
+  }
+}

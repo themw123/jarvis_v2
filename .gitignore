@@ -1,0 +1,12 @@
+__pycache__
+build
+Lib
+libs
+models
+Scripts
+venv
+share
+temp_audio
+config.json
+pyvenv.cfg
+include
