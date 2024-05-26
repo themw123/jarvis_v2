@@ -30,3 +30,7 @@ Where to get?
 - https://github.com/SYSTRAN/faster-whisper
 - https://github.com/rhasspy/piper
 - https://huggingface.co/coqui/XTTS-v2
+
+all about Ollama:
+
+- https://github.com/ollama/ollama
