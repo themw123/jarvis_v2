@@ -40,8 +40,6 @@ def main():
     
 
     while True:
-        
-        Interrupt.interruppted = False
         #thread listen to interupt
         t = threading.Thread(target=Interrupt.listen_to_interupt)
         t.start()

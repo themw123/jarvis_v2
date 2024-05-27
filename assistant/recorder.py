@@ -3,6 +3,7 @@ import keyboard
 import pyaudio
 import speech_recognition as sr
 
+from assistant.interrupt import Interrupt
 from assistant.player import Player
 
 
@@ -60,6 +61,8 @@ class Recorder:
             # Add the data to a buffer (a list of chunks)
             frames.append(data)
 
+
+        Interrupt.interruppted = False
 
         Player.play_record_end()
 
