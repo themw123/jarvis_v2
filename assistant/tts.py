@@ -28,9 +28,9 @@ class Tts:
             self.xtts_model.cuda()
         
                 
-        files = os.listdir("./temp_audio")
+        files = os.listdir("temp_audio")
         for file in files:
-            os.remove(os.path.join("./temp_audio", file))     
+            os.remove(os.path.join("temp_audio", file))     
                         
     def tts_wrapper(self, brain_text):
         

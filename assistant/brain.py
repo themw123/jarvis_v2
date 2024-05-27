@@ -1,21 +1,25 @@
 import re
 from assistant.brains.chatgpt import Chatgpt
 from assistant.brains.ollama import Ollama
-
+from assistant.brains.groq import GroqClass
 
 class Brain:
     
     def __init__(self, config, config_path):
         self.config = config
         self.messages = [ {"role": "system", "content": self.config["chat"]["role"]} ]
-        self.chatgpt = Chatgpt(config, config_path, self.messages)
         self.ollama = Ollama(config, self.messages)
-    
+        self.groq = GroqClass(config, self.messages)
+        self.chatgpt = Chatgpt(config, config_path, self.messages)
+
+        
     def brain_wrapper(self, stt):
-        if self.config["brain"]["active"] == "chatgpt":
-            return self.__stream_sentences_from_chunks(self.chatgpt.ask_wrapper(stt=stt))
-        elif self.config["brain"]["active"] == "ollama":
+        if self.config["brain"]["active"] == "ollama":
             return self.__stream_sentences_from_chunks(self.ollama.ask_wrapper(stt=stt))
+        elif self.config["brain"]["active"] == "groq":
+            return self.__stream_sentences_from_chunks(self.groq.ask_wrapper(stt=stt))
+        elif self.config["brain"]["active"] == "chatgpt":
+            return self.__stream_sentences_from_chunks(self.chatgpt.ask_wrapper(stt=stt))
         else:
             raise Exception(self.config["brain"]["active"] + ": This brain type does not exist")
         
