@@ -1,11 +1,11 @@
-#contextlib um "hello from the pygame community" zu entfernen
-import contextlib
+
 import json
+import threading
 
 import colorama
 
-with contextlib.redirect_stdout(None):
-    from pygame import mixer
+from assistant.interrupt import Interrupt
+
 
 from assistant.brain import Brain
 from assistant.player import Player
@@ -15,11 +15,16 @@ from assistant.stt import Stt
 
 
 def main():
-    print("\n- start assistant...\n")
 
-    read_conf()
+    print("\n- start assistant...\n")
+    
+    global config_path, config
+    config_path = "config.json"
+    
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+        
     colorama.init()
-    mixer.init()
     
     recorder = Recorder()
     player = Player(config)
@@ -35,39 +40,25 @@ def main():
     
 
     while True:
-
-        try:
-            audio = recorder.listen()
-            stt_text = stt.stt_wrapper(audio=audio)
-
-            print_user(stt_text)
-            
-            print_assistant()
-            brain_text = brain.brain_wrapper(stt=stt_text)
-
-            tts_text = tts.tts_wrapper(brain_text=brain_text)
-            
-            player.play_wrapper(tts=tts_text)
-              
- 
-        except KeyboardInterrupt:
-            Player.stream_from_file_interrupted()
-            print(colorama.Style.RESET_ALL)
-            mixer.music.pause()
-            continue
-
-            
-def read_conf():
-    
-    global config_path, config
-    config_path = "config.json"
-    
-    with open(config_path, 'r') as f:
-        config = json.load(f)
-             
         
-  
+        Interrupt.interruppted = False
+        #thread listen to interupt
+        t = threading.Thread(target=Interrupt.listen_to_interupt)
+        t.start()
+ 
+        audio = recorder.listen()
+        stt_text = stt.stt_wrapper(audio=audio)
 
+        print_user(stt_text)
+        
+        print_assistant()
+        brain_text = brain.brain_wrapper(stt=stt_text)
+
+        tts_text = tts.tts_wrapper(brain_text=brain_text)
+        
+        player.play_wrapper(tts=tts_text)
+                          
+             
 def print_user(stt):
     print("\n" + colorama.Fore.YELLOW + "("+ config["chat"]["your_name"] +"):", stt + colorama.Style.RESET_ALL)
     pass

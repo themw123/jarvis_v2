@@ -1,6 +1,7 @@
 import colorama
 from ollama import Client
 
+from assistant.interrupt import Interrupt
 from assistant.player import Player
 
 
@@ -32,6 +33,8 @@ class Ollama:
             count = 0
             full_response = ""
             for chunk in stream:
+                if Interrupt.interruppted:
+                    break
                 if chunk['message']['content'] is not None:
                     if count == 0:
                         #warte sound abspielen

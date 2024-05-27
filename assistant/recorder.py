@@ -49,7 +49,7 @@ class Recorder:
             time.sleep(0.1)
 
         # stop playing old audio if there is any
-        Player.stream_from_file_interrupted()
+        Player.kill_queue()
         Player.play_record_start()
         
         # Record audio until space is pressed again to stop

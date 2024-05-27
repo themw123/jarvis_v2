@@ -1,3 +1,8 @@
+#contextlib um "hello from the pygame community" zu entfernen
+import contextlib
+with contextlib.redirect_stdout(None):
+    from pygame import mixer
+    
 import io
 import queue
 import wave
@@ -7,16 +12,18 @@ from pygame import mixer
 from pydub import AudioSegment
 from gtts import gTTS
 
+from assistant.interrupt import Interrupt
+
 
 class Player:
     
-    stop_playback = False
     audio_queue = queue.Queue()
     queing = False
 
 
     def __init__(self, config):
         self.config = config
+        mixer.init()
     def play_wrapper(self, tts):
                 
         if self.config["tts"]["active"] == "google":
@@ -51,6 +58,8 @@ class Player:
                 Player.play_wait_pause()              
             for chunk in sentence.stream():
                 if chunk:
+                    if Interrupt.interruppted:
+                        break
                     # Convert mp3 data to raw audio data
                     audio = AudioSegment.from_mp3(io.BytesIO(chunk))
                     audio = audio.speedup(playback_speed=1.3)
@@ -83,6 +92,8 @@ class Player:
             if counter == 0:
                 Player.play_wait_pause()          
             for chunk in sentence:
+                if Interrupt.interruppted:
+                    return
                 # Chunk abspielen
                 stream.write(chunk.cpu().numpy().tobytes())
             counter += 1
@@ -95,12 +106,10 @@ class Player:
         
     @staticmethod    
     def stream_from_file(): 
-                
-        Player.stop_playback = False
-        
+                        
         while Player.queing or not Player.audio_queue.empty():
             
-            if Player.stop_playback:
+            if Interrupt.interruppted:
                 break
             
             try:
@@ -123,7 +132,7 @@ class Player:
                 # Read audio data in chunks and write to the stream
                 data = audio_file.readframes(1024)
                 while data:
-                    if Player.stop_playback:
+                    if Interrupt.interruppted:
                         break
                     stream.write(data)
                     data = audio_file.readframes(1024)
@@ -156,6 +165,8 @@ class Player:
             if counter == 0:
                 Player.play_wait_pause()          
             for chunk in sentence:
+                if Interrupt.interruppted:
+                    break
                 stream.write(chunk)
             counter += 1
 
@@ -163,12 +174,10 @@ class Player:
         stream.close()
         p.terminate()               
             
-            
-            
+              
             
     @staticmethod
-    def stream_from_file_interrupted():
-        Player.stop_playback = True
+    def kill_queue():
         Player.queing = False
         # Attempt to clear the queue immediately to prevent any further processing
         while not Player.audio_queue.empty():
@@ -206,4 +215,3 @@ class Player:
         mixer.music.load("sound/recording-end.wav")
         mixer.music.set_volume(0.3) 
         mixer.music.play()    
-    
