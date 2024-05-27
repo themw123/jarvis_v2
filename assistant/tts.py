@@ -9,10 +9,11 @@ from assistant.player import Player
 
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
+
 import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
-
+            
 class Tts:
     
     def __init__(self, config):
@@ -23,9 +24,10 @@ class Tts:
             config = XttsConfig()
             config.load_json(self.config["tts"]["xtts"]["location"] + "/config.json")
             self.xtts_model = Xtts.init_from_config(config)
-            self.xtts_model.load_checkpoint(config, checkpoint_dir=self.config["tts"]["xtts"]["location"])
+            self.xtts_model.load_checkpoint(config, checkpoint_dir=self.config["tts"]["xtts"]["location"], use_deepspeed=True)
             self.xtts_model.cuda()
-
+        
+                
         files = os.listdir("./temp_audio")
         for file in files:
             os.remove(os.path.join("./temp_audio", file))     
@@ -160,4 +162,5 @@ class Tts:
             return speaker_embedding, gpt_cond_latent
         except:
             raise Exception("Datei wurde nicht gefunden oder konnte nicht geladen werden.")  
+        
         

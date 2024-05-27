@@ -1,4 +1,3 @@
-
 #contextlib um "hello from the pygame community" zu entfernen
 import contextlib
 import json
@@ -49,7 +48,7 @@ def main():
             tts_text = tts.tts_wrapper(brain_text=brain_text)
             
             player.play_wrapper(tts=tts_text)
-  
+              
  
         except KeyboardInterrupt:
             Player.stream_from_file_interrupted()
@@ -79,6 +78,5 @@ def print_assistant():
 
 if __name__ == "__main__":
     main()
+
    
-
-

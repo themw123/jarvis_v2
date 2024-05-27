@@ -8,10 +8,10 @@ from assistant.player import Player
 
 class Chatgpt:
 
-    def __init__(self, config, config_path):
+    def __init__(self, config, config_path, self_messages: list):
         self.config = config
         self.config_path = config_path
-
+        self.messages = self_messages
             
     def ask_wrapper(self, stt):
         return self.__ask_generator(stt)
@@ -23,34 +23,31 @@ class Chatgpt:
             client = OpenAI(
                 api_key=self.config["brain"]["chatgpt"]["api_key"],
 
-            )
-            
-            messages = [ {"role": "system", "content": self.config["chat"]["role"]} ]
-            messages.append(
+            )         
+            self.messages.append(
                 {"role": "user", "content": stt},
             )
                         
             stream = client.chat.completions.create(
                 model="gpt-4o",
-                messages=messages,
+                messages=self.messages,
                 stream=True,
             )
             
             count = 0
+            full_response = ""
             for chunk in stream:
                 if chunk.choices[0].delta.content is not None:
                     if count == 0:
                         #warte sound abspielen
                         Player.play_wait()
-                    count += 1
                     content = chunk.choices[0].delta.content
+                    full_response += content
                     print(content, end="", flush=True)
                     yield content
-                    
-
+                    count += 1
+            self.messages.append({'role': 'system', 'content': full_response})
             print()
-            #warte sound pausieren(findet in tts statt)
-            #Player.play_wait_pause()
             self.__reset__colorama()
 
         except KeyboardInterrupt:

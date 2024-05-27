@@ -8,8 +8,8 @@ executables = [Executable("main.py", icon="img/ai.ico", target_name="assisstant"
 # Weitere Optionen (optional)
 options = {
     'build_exe': {
-        'packages': ["dns"],
-        'include_files': ["config.json", "sound", "img"],  # Liste der zusätzlich einzuschließenden Dateien
+        #'packages': ["dns"],
+        'include_files': ["config.json", "sound", "img", "C:\\Users\\Marvin\\git\\jarvis_v2\\models"],  # Liste der zusätzlich einzuschließenden Dateien
         'excludes': [],       # Liste von Modulen, die nicht eingeschlossen werden sollen
     }
 }

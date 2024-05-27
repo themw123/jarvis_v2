@@ -7,8 +7,9 @@ class Brain:
     
     def __init__(self, config, config_path):
         self.config = config
-        self.chatgpt = Chatgpt(config, config_path)
-        self.ollama = Ollama(config)
+        self.messages = [ {"role": "system", "content": self.config["chat"]["role"]} ]
+        self.chatgpt = Chatgpt(config, config_path, self.messages)
+        self.ollama = Ollama(config, self.messages)
     
     def brain_wrapper(self, stt):
         if self.config["brain"]["active"] == "chatgpt":

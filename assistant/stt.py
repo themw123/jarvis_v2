@@ -15,6 +15,7 @@ class Stt:
             print('\n- starting whisper_local model\n')
             device = "cuda" if self.config["stt"]["whisper_local"]["gpu"] else "cpu"
             compute_type = "float16" if device == "cuda" else "int8"
+            test = self.config["stt"]["whisper_local"]["location"] + self.config["stt"]["whisper_local"]["model"],
             self.model = WhisperModel(
                 self.config["stt"]["whisper_local"]["location"] + self.config["stt"]["whisper_local"]["model"],
                 device=device,
