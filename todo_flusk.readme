@@ -1,0 +1,14 @@
+input and output stream/generator als endpoint.
+Websocket besser geeignet
+
+@app.route("/stream", methods=["POST"])
+def stream_data():
+    def generate():
+        chunk_size = 4096
+        while True:
+            chunk = flask.request.stream.read(chunk_size)
+            if len(chunk) == 0:
+                break
+            yield chunk
+
+    return Response(generate(), mimetype="application/octet-stream")
