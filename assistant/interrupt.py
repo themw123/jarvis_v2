@@ -11,9 +11,8 @@ class Interrupt:
     def listen_to_interupt():
         while True:
             if keyboard.is_pressed('ctrl+x'):
-                Interrupt.__do_interrupt()
-                break     
-
+                Interrupt.__do_interrupt()     
+                    
             
     @staticmethod
     def __do_interrupt():

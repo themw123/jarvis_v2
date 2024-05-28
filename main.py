@@ -34,15 +34,15 @@ def main():
     stt = Stt(config)
     tts = Tts(config)
     
+    #thread listen to interupt
+    t = threading.Thread(target=Interrupt.listen_to_interupt)
+    t.start()
 
     #Begrüßung starten
     Player.play_initial()
     
 
     while True:
-        #thread listen to interupt
-        t = threading.Thread(target=Interrupt.listen_to_interupt)
-        t.start()
  
         audio = recorder.listen()
         stt_text = stt.stt_wrapper(audio=audio)
