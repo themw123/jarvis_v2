@@ -47,9 +47,7 @@ class Stt:
             raise Exception("Temporäre Datei konnte nicht erstellt werden")
 
         try:
-            print("1")
             with open(temp_file.name, "rb") as audio_file:
-                print("2")
                 text = ""
                 segments, info = self.model.transcribe(
                     audio_file,

@@ -1,4 +1,5 @@
 
+import time
 import colorama
 import keyboard
 
@@ -11,8 +12,9 @@ class Interrupt:
     def listen_to_interupt():
         while True:
             if keyboard.is_pressed('ctrl+x'):
-                Interrupt.__do_interrupt()     
-                    
+                Interrupt.__do_interrupt()
+            #important, otherwise the cpu will be overloaded and whisper stt will be extremely slow     
+            time.sleep(0.1)        
             
     @staticmethod
     def __do_interrupt():
