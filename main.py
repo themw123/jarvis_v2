@@ -15,7 +15,7 @@ from assistant.stt import Stt
 
 
 def main():
-
+    
     print("\n- start assistant...\n")
     
     global config_path, config
@@ -33,15 +33,12 @@ def main():
 
     stt = Stt(config)
     tts = Tts(config)
-    
-    #thread listen to interupt
-    t = threading.Thread(target=Interrupt.listen_to_interupt)
-    t.start()
+
+    Interrupt.listen_to_interupt()
 
     #Begrüßung starten
     Player.play_initial()
     
-
     while True:
  
         audio = recorder.listen()

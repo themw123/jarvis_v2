@@ -40,14 +40,13 @@ class Recorder:
         print("- ctrl + space start/stop recording")
         
         #nach langer wartezeit reagiert es nicht mehr auf ctrl + space
-        #keyboard.wait('ctrl + space')
+        keyboard.wait('ctrl+space', suppress=True, trigger_on_release=True)
         #deswegen lieber mit schleife
-        while not keyboard.is_pressed('ctrl + space'):
-            time.sleep(0.1)
-
+        #while not keyboard.is_pressed('ctrl + space'):
+        #    time.sleep(0.1)
         # warte bis space nicht mehr gedrückt ist
-        while keyboard.is_pressed('ctrl + space'):
-            time.sleep(0.1)
+        #while keyboard.is_pressed('ctrl + space'):
+        #    time.sleep(0.1)
 
         # stop playing old audio if there is any
         Player.kill_queue()
