@@ -15,47 +15,69 @@ from assistant.stt import Stt
 
 
 def main():
+
     
-    print("\n- start assistant...\n")
+    global config, recorder, player, brain, stt, tts
+
     
-    global config_path, config
     config_path = "config.json"
     
     with open(config_path, 'r') as f:
         config = json.load(f)
         
     colorama.init()
-    
-    recorder = Recorder()
-    player = Player(config)
-    
-    brain = Brain(config, config_path)
 
+
+    print("\n- start assistant...\n")
+
+    recorder = Recorder(config)
+    player = Player(config)
+
+
+    brain = Brain(config, config_path)
+    
     stt = Stt(config)
     tts = Tts(config)
 
-    Interrupt.listen_to_interupt()
-
-    #Begrüßung starten
-    Player.play_initial()
     
+    Interrupt.listen_to_interupt_keyboard()
+    # only works with headphones on
+    #t = threading.Thread(target=Interrupt.listen_to_interupt_voice, args=(recorder,))
+    #t.start()
+
+
     while True:
- 
-        audio = recorder.listen()
+        recorder.event.clear()
+        
+        #do recorder.listen() in thread
+        #listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard)
+        #listen_keyboard.start()
+        #listen_keyboard.join()
+        
+        listen_voice = threading.Thread(target=recorder.listen_on_voice, args=("default",))
+        listen_voice.start()
+        #listen_voice.join()
+    
+        #wait until one of the threads is finished
+        recorder.event.wait()
+        
+
+        audio = recorder.audio
+        
         stt_text = stt.stt_wrapper(audio=audio)
 
         print_user(stt_text)
-        
         print_assistant()
+        
         brain_text = brain.brain_wrapper(stt=stt_text)
 
         tts_text = tts.tts_wrapper(brain_text=brain_text)
         
         player.play_wrapper(tts=tts_text)
-                          
-             
-def print_user(stt):
-    print("\n" + colorama.Fore.YELLOW + "("+ config["chat"]["your_name"] +"):", stt + colorama.Style.RESET_ALL)
+                               
+           
+def print_user(stt_text):
+    print("\n" + colorama.Fore.YELLOW + "("+ config["chat"]["your_name"] +"):", stt_text + colorama.Style.RESET_ALL)
     pass
 def print_assistant():
     print("\n" + colorama.Fore.GREEN + "("+config["chat"]["role_name"]+"): ", end="")        

@@ -1,3 +1,4 @@
+import threading
 import time
 import keyboard 
 import pyaudio
@@ -6,47 +7,49 @@ import speech_recognition as sr
 from assistant.interrupt import Interrupt
 from assistant.player import Player
 
-
 class Recorder:
-
+    
     #init
-    def __init__(self):
-        pass
- 
-
-    def listen(self):
+    def __init__(self, config):
+        self.config = config
+        self.stream = None
+        self.p = pyaudio.PyAudio()
+        self.audio = None
+        self.chunk = 1024
+        self.rate = 44100
+        self.channels = 1
+        self.format = pyaudio.paInt16
+        self.frames = []
         
+        self.event = threading.Event()
+
+                
+        self.__init_recorder()
+
+
+ 
+    def __init_recorder(self):
         # Variables for Pyaudio
-        chunk = 1024
-        format = pyaudio.paInt16
-        channels = 1
-        rate = 44100
-
-
-        # Audio recording stuff
-        p = pyaudio.PyAudio()
-
-        stream = p.open(format=format,
-                        channels=channels,
-                        rate=rate,
+        self.stream = self.p.open(format=self.format,
+                        channels=self.channels,
+                        rate=self.rate,
                         input=True,
-                        frames_per_buffer=chunk)
+                        frames_per_buffer=self.chunk)
+    
+    
 
-
-        # Create an empty list for audio recording
-        frames = []
-        #stream schon mal starten
-
+    def listen_on_keyboard(self):        
         print("- ctrl + space start/stop recording")
         
-        #nach langer wartezeit reagiert es nicht mehr auf ctrl + space
-        keyboard.wait('ctrl+space', suppress=True, trigger_on_release=True)
+        Player.pause()
+        
+        #keyboard.wait('ctrl+space', suppress=True, trigger_on_release=True)
         #deswegen lieber mit schleife
-        #while not keyboard.is_pressed('ctrl + space'):
-        #    time.sleep(0.1)
+        while not keyboard.is_pressed('ctrl + space'):
+            time.sleep(0.1)
         # warte bis space nicht mehr gedrückt ist
-        #while keyboard.is_pressed('ctrl + space'):
-        #    time.sleep(0.1)
+        while keyboard.is_pressed('ctrl + space'):
+            time.sleep(0.1)
 
         # stop playing old audio if there is any
         Player.kill_queue()
@@ -56,43 +59,72 @@ class Recorder:
         print("- listen...")
         while not keyboard.is_pressed('ctrl + space'):
             # Record data audio data
-            data = stream.read(chunk)
+            data = self.stream.read(self.chunk)
             # Add the data to a buffer (a list of chunks)
-            frames.append(data)
-
+            self.frames.append(data)
 
         Interrupt.interruppted = False
 
         Player.play_record_end()
 
         # Close the audio recording stream
-        stream.close()
-        p.terminate()
-
+        #self.stream.close()
+        #self.p.terminate()
+        
         # Concatenate the recorded audio data from the list of frames
-        audio_data = b''.join(frames)
+        audio_data = b''.join(self.frames)
 
-        # Convert the recorded audio data to a speech_recognition.AudioData object
-        #r = sr.Recognizer()
+        self.audio = sr.AudioData(audio_data, sample_rate=self.rate, sample_width=self.p.get_sample_size(self.format))
 
+        self.frames = []
+        #return audio
+        self.event.set()
         
-        """
-        # spiele audio ab zum testen
-        sample_width = 2
-        audio_seg = AudioSegment(
-            data=audio_data,
-            sample_width=sample_width, 
-            frame_rate=rate,
-            channels=channels
-        )
-        play_pydub(audio_seg)
-        """
-
-        audio = sr.AudioData(audio_data, sample_rate=rate, sample_width=p.get_sample_size(format))
-
-        return audio
-
+    def listen_on_voice(self, mode):
+                        
+        keyword = self.config["stt"]["keyword"]
+        breakword = self.config["stt"]["breakword"]
         
+        if mode == "default":
+            print("- say '", keyword ,"' to start and say '", breakword ,"' to stop recording")
+        
+        if mode == "interrupt":
+            keyword = breakword
+        
+        # Erstelle ein Recognizer-Objekt
+        recognizer = sr.Recognizer()
 
+        # Verwende das Mikrofon als Audioquelle
+        with sr.Microphone() as source:
+            while True:
+                recognizer.adjust_for_ambient_noise(source, duration=1)
+                Player.pause()
+                #print("- listen...")
+                audio_data = recognizer.listen(source)
+                self.audio = audio_data  
+                try:
+                    text = recognizer.recognize_google(audio_data, language="de-DE")
+                    if keyword.lower() in text.lower():
+                        #if it is ready to record voice again but is still talking from the last round
+                        Interrupt.do_interrupt()
+                        if mode == "interrupt":
+                            break
+                        Player.play_record_start()
+                        audio_data = recognizer.listen(source)
+                        self.audio = audio_data
+                        Player.play_record_end() 
+                        Interrupt.interruppted = False
+                        self.event.set()
+                        break
+                    #print("Du hast gesagt: " + text)
+                    pass
+                except sr.UnknownValueError:
+                    #print("Google Web Speech API konnte das Audio nicht verstehen")
+                    pass
+                except sr.RequestError as e:
+                    print("Konnte keine Anfrage an den Google Web Speech API stellen; {0}".format(e))
+                    pass
+  
+  
         
         

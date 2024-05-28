@@ -1,11 +1,10 @@
-import json
 import os
 import tempfile
 from faster_whisper import WhisperModel
 from openai import OpenAI
 import speech_recognition as sr
 from speech_recognition import AudioData, Recognizer
-
+from assistant.player import Player
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 class Stt:
@@ -15,11 +14,14 @@ class Stt:
             print('\n- starting whisper_local model\n')
             device = "cuda" if self.config["stt"]["whisper_local"]["gpu"] else "cpu"
             compute_type = "float16" if device == "cuda" else "int8"
+            
             self.model = WhisperModel(
                 model_size_or_path=self.config["stt"]["whisper_local"]["location"] + self.config["stt"]["whisper_local"]["model"],
                 device=device,
                 compute_type=compute_type
             )
+    
+
 
     def stt_wrapper(self, audio: AudioData):
         print("- interpret...")

@@ -102,7 +102,7 @@ class Tts:
                 "-f", output_file.name
             ]
             process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-            #Player.play_wait_pause()
+            #Player.pause()
             process.communicate(chunk.encode())
             process.wait()
             Player.audio_queue.put(output_file.name)

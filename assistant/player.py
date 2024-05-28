@@ -24,6 +24,7 @@ class Player:
     def __init__(self, config):
         self.config = config
         mixer.init()
+        Player.play_initial3()
     def play_wrapper(self, tts):
                 
         if self.config["tts"]["active"] == "google":
@@ -55,7 +56,7 @@ class Player:
         for sentence in sentences:
             sentence: gTTS
             if counter == 0:
-                Player.play_wait_pause()              
+                Player.pause()              
             for chunk in sentence.stream():
                 if chunk:
                     if Interrupt.interruppted:
@@ -90,7 +91,7 @@ class Player:
         counter = 0
         for sentence in sentences:   
             if counter == 0:
-                Player.play_wait_pause()          
+                Player.pause()          
             for chunk in sentence:
                 if Interrupt.interruppted:
                     return
@@ -120,7 +121,7 @@ class Player:
                                 
             # Load the audio file using wave
             with wave.open(file_path, 'rb') as audio_file:
-                Player.play_wait_pause()
+                Player.pause()
                 # Create a PyAudio instance
                 p = pyaudio.PyAudio()
 
@@ -163,7 +164,7 @@ class Player:
         counter = 0
         for sentence in sentences:   
             if counter == 0:
-                Player.play_wait_pause()          
+                Player.pause()          
             for chunk in sentence:
                 if Interrupt.interruppted:
                     break
@@ -195,13 +196,23 @@ class Player:
     def play_initial():
         mixer.music.load("sound/initial.mp3")
         mixer.music.play()
+        
+    @staticmethod
+    def play_initial2():
+        mixer.music.load("sound/initial2.wav")
+        mixer.music.play()
+    
+    @staticmethod
+    def play_initial3():
+        mixer.music.load("sound/initial3.wav")
+        mixer.music.play()
             
     @staticmethod
     def play_wait():
         mixer.music.load("sound/wait.mp3")
         mixer.music.play()
     @staticmethod
-    def play_wait_pause():
+    def pause():
         mixer.music.pause()  
         
     @staticmethod
