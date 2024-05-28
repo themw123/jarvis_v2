@@ -19,5 +19,4 @@ class Interrupt:
         Interrupt.interruppted = True
         from assistant.player import Player
         Player.kill_queue()
-        print(colorama.Style.RESET_ALL)
         Player.play_wait_pause()
