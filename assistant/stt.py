@@ -15,9 +15,8 @@ class Stt:
             print('\n- starting whisper_local model\n')
             device = "cuda" if self.config["stt"]["whisper_local"]["gpu"] else "cpu"
             compute_type = "float16" if device == "cuda" else "int8"
-            test = self.config["stt"]["whisper_local"]["location"] + self.config["stt"]["whisper_local"]["model"],
             self.model = WhisperModel(
-                self.config["stt"]["whisper_local"]["location"] + self.config["stt"]["whisper_local"]["model"],
+                model_size_or_path=self.config["stt"]["whisper_local"]["location"] + self.config["stt"]["whisper_local"]["model"],
                 device=device,
                 compute_type=compute_type
             )
@@ -40,8 +39,6 @@ class Stt:
     
     def __stt_whisper_local(self, audio: AudioData):
 
-        text = ""
-
         try:
             # Erstelle eine temporäre Datei und schreibe den Inhalt des Audio-Streams hinein
             with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_file:
@@ -50,14 +47,18 @@ class Stt:
             raise Exception("Temporäre Datei konnte nicht erstellt werden")
 
         try:
+            print("1")
             with open(temp_file.name, "rb") as audio_file:
+                print("2")
+                text = ""
                 segments, info = self.model.transcribe(
                     audio_file,
                     beam_size=5
                 )
                 for segment in segments:
-                    text += segment.text + " "                   
-                text = text.strip()
+                    text += segment.text + " "
+                return text.strip()
+                
         except IOError as file_error:
             # Exception for file reading errors (e.g., file not found, permissions issue)
             raise Exception("Fehler beim lesen der Temp File:", file_error)
@@ -66,13 +67,9 @@ class Stt:
             raise Exception("Fehler bei der Whisper local:", api_error)
         finally:
             temp_file.close()
-            os.remove(temp_file.name)    
+            os.remove(temp_file.name)  
                 
-        return text
-
     def __stt_whisper(self, audio: AudioData):
-
-        text = None
 
         try:
             # Erstelle eine temporäre Datei und schreibe den Inhalt des Audio-Streams hinein
@@ -92,6 +89,7 @@ class Stt:
                     response_format="text",
                     language=self.config["stt"]["whisper"]["language"]
                 )
+            return text
         except IOError as file_error:
             # Exception for file reading errors (e.g., file not found, permissions issue)
             raise Exception("Fehler beim lesen der Temp File:", file_error)
@@ -102,17 +100,14 @@ class Stt:
             temp_file.close()
             os.remove(temp_file.name)    
                 
-        return text
     
     
     def __stt_google(self, r: Recognizer, audio: AudioData):
-        text = ""
         try:
             #nur google ist ohne api key.
-            text = r.recognize_google(audio, language=self.config["stt"]["google"]["language"])
+            return r.recognize_google(audio, language=self.config["stt"]["google"]["language"])
         except sr.UnknownValueError:
             print("- Sprache konnte nicht erkannt werden.\n")
         except sr.RequestError:
             print("- Fehler beim Abrufen der Spracherkennung.\n")
-        return text
     
