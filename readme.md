@@ -1,6 +1,6 @@
 # Jarvis
 
-Jarvis is your conversational assistant. It can be used all local. For now only tested on Windows 11.
+Jarvis is your conversational assistant available as a console programm. It can be used all local. For now only tested on Windows 11. Recommended vram 8gb.
 
 - Voice To Text 📝:
 
