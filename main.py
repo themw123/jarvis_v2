@@ -42,7 +42,6 @@ def main():
     t = threading.Thread(target=Lifecircle.listen_to_interupt_voice, args=(recorder,))
     t.start()
 
-    #do recorder.listen() in thread
     listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard, args=(config,))
     listen_keyboard.start()
     
