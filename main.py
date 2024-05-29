@@ -1,7 +1,6 @@
 
 import json
 import threading
-import time
 
 import colorama
 
@@ -60,10 +59,7 @@ def main():
     while True:
         print("\n- waiting for you ...")
         recorder.event.clear()
-    
-
         recorder.event.wait()
-
 
         audio = recorder.audio
         
