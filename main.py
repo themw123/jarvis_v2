@@ -15,36 +15,33 @@ from assistant.stt import Stt
 
 
 def main():
-
-    print("\n- start assistant...\n")
-    print("- start recording by saying '"+ config["stt"]["keyword"]+"' or ctrl + space")
-    print("- stop recording by saying '"+config["stt"]["breakword"]+"' or ctrl + x")
-    
     global config, recorder, player, brain, stt, tts
 
-    
     config_path = "config.json"
     
     with open(config_path, 'r') as f:
         config = json.load(f)
+        
+    print("\n- start assistant...\n")
+    print("- start recording by saying '"+ config["stt"]["keyword"]+"' or ctrl + space")
+    print("- stop recording by saying '"+config["stt"]["breakword"]+"' or ctrl + x")    
         
     colorama.init()
     
     recorder = Recorder(config)
     player = Player(config)
 
-
     brain = Brain(config, config_path)
     
     stt = Stt(config)
     tts = Tts(config)
 
+    #default ctrl + space is used for interrupting. For different key and without start recording immediately use this thread.
+    #Interrupt.listen_to_interupt_keyboard()
     
-    Interrupt.listen_to_interupt_keyboard()
-    # only works with headphones on
+    #for voice interrupting with breakword use this thread, but only works with headphones on
     t = threading.Thread(target=Interrupt.listen_to_interupt_voice, args=(recorder,))
     t.start()
-
 
     #do recorder.listen() in thread
     listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard)
@@ -53,7 +50,6 @@ def main():
     listen_voice = threading.Thread(target=recorder.listen_on_voice, args=("default",))
     listen_voice.start()
     
-
     while True:
         print("\n- waiting for you ...")
         recorder.event.clear()
@@ -70,15 +66,13 @@ def main():
         tts_text = tts.tts_wrapper(brain_text=brain_text)
         
         player.play_wrapper(tts=tts_text)
-                               
-           
+                                     
 def print_user(stt_text):
     print("\n" + colorama.Fore.YELLOW + "("+ config["chat"]["your_name"] +"):", stt_text + colorama.Style.RESET_ALL)
     pass
 def print_assistant():
     print("\n" + colorama.Fore.GREEN + "("+config["chat"]["role_name"]+"): ", end="")        
     pass
-
 
 if __name__ == "__main__":
     main()

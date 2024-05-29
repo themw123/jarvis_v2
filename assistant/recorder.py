@@ -36,15 +36,23 @@ class Recorder:
                         input=True,
                         frames_per_buffer=self.chunk)
     
+    def __before_recording(self):
+        Interrupt.do_interrupt()
+        
+    def __after_recording(self):
+        Interrupt.interruppted = False
+        Player.play_record_end()
+        
+    def __end_recording(self):
+        self.event.set()
+        
     
 
     def listen_on_keyboard(self):
         Player.pause()
         while True: 
-            
             # coll down. Otherwise the space key is recognized immediately from last round
             time.sleep(1)       
-                
             #keyboard.wait('ctrl+space', suppress=True, trigger_on_release=True)
             #deswegen lieber mit schleife
             while not keyboard.is_pressed('ctrl + space'):
@@ -52,42 +60,30 @@ class Recorder:
             # warte bis space nicht mehr gedrückt ist
             while keyboard.is_pressed('ctrl + space'):
                 time.sleep(0.1)
-            
-            
+    
             self.frames = []
-            
-            Player.kill_queue()
+    
+            self.__before_recording()
             Player.play_record_start()
-            
-            # Record audio until space is pressed again to stop
             print("- listen...")
             while not keyboard.is_pressed('ctrl + space'):
                 # Record data audio data
                 data = self.stream.read(self.chunk)
                 # Add the data to a buffer (a list of chunks)
                 self.frames.append(data)
-
-            Interrupt.interruppted = False
-
-            Player.play_record_end()
+            self.__after_recording()
             
             audio_data = b''.join(self.frames)
-
             self.audio = sr.AudioData(audio_data, sample_rate=self.rate, sample_width=self.p.get_sample_size(self.format))
-
             #return audio
-            self.event.set()
+            self.__end_recording()
 
-        
     def listen_on_voice(self, mode):
-        
         Player.pause()
-        
         while True:
- 
             keyword = self.config["stt"]["keyword"]
             breakword = self.config["stt"]["breakword"]
-            
+    
             if mode == "interrupt":
                 keyword = breakword
             
@@ -104,16 +100,18 @@ class Recorder:
                         text = recognizer.recognize_google(audio_data, language="de-DE")
                         if keyword.lower() in text.lower():
                             #if it is ready to record voice again but is still talking from the last round
-                            Interrupt.do_interrupt()
+                            # not needed in listen_on_keyboard because there interrupting is handlet by the Interrupt listener
+                            #Interrupt.do_interrupt()
+                            
+                            self.__before_recording()
                             if mode == "interrupt":
                                 break
-                            print("- listen...")
                             Player.play_record_start()
+                            print("- listen...")
                             audio_data = recognizer.listen(source)
                             self.audio = audio_data
-                            Player.play_record_end() 
-                            Interrupt.interruppted = False
-                            self.event.set()
+                            self.__after_recording()
+                            self.__end_recording()
                             break
                         #print("Du hast gesagt: " + text)
                         pass
