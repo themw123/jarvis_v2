@@ -50,6 +50,7 @@ def main():
     listen_voice = threading.Thread(target=recorder.listen_on_voice, args=("default",))
     listen_voice.start()
     
+    Player.play_initial()
     while True:
         print("\n- waiting for you ...")
         recorder.event.clear()

@@ -24,7 +24,6 @@ class Player:
     def __init__(self, config):
         self.config = config
         mixer.init()
-        Player.play_initial3()
     def play_wrapper(self, tts):
                 
         if self.config["tts"]["active"] == "google":

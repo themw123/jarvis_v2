@@ -49,7 +49,6 @@ class Recorder:
     
 
     def listen_on_keyboard(self):
-        Player.pause()
         while True: 
             # coll down. Otherwise the space key is recognized immediately from last round
             time.sleep(1)       
@@ -79,7 +78,6 @@ class Recorder:
             self.__end_recording()
 
     def listen_on_voice(self, mode):
-        Player.pause()
         while True:
             keyword = self.config["stt"]["keyword"]
             breakword = self.config["stt"]["breakword"]
