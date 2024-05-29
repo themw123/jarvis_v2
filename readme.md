@@ -23,7 +23,7 @@ Jarvis is your conversational assistant available as a console programm. It can 
 ## How to Use:
 
 - start recording by saying the startword or startkey
-- interrupt assistent by saving the stopword or startkey
+- interrupt assistent by saving the stopword or stopkey
 - best practise by saying something before the startword or stopword and wait for a short moment. For example "okay ... [startword]"
 - keeps conversation until next restart
 

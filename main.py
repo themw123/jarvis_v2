@@ -4,7 +4,7 @@ import threading
 
 import colorama
 
-from assistant.interrupt import Interrupt
+from assistant.lifecircle import Lifecircle
 
 
 from assistant.brain import Brain
@@ -22,9 +22,9 @@ def main():
     with open(config_path, 'r') as f:
         config = json.load(f)
         
-    print("\n- start assistant...\n")
-    print("- start recording by saying '"+ config["recorder"]["startword"]+"' or "+config["recorder"]["startkey"])
-    print("- stop recording by saying '"+config["recorder"]["stopword"]+"' or "+config["recorder"]["startkey"]+"\n")    
+    print("\n- start assistant...")
+    print("\n- start recording by saying '"+ config["recorder"]["startword"]+"' or "+config["recorder"]["startkey"])
+    print("- stop recording by saying '"+config["recorder"]["stopword"]+"' or "+config["recorder"]["stopkey"])    
         
     colorama.init()
     
@@ -36,9 +36,10 @@ def main():
     stt = Stt(config)
     tts = Tts(config)
 
-    #for keyboard interrupting use start key
+
+    Lifecircle.listen_to_interupt_keyboard(config)
     #for voice interrupting with stopword. Only works with headphones on
-    t = threading.Thread(target=Interrupt.listen_to_interupt_voice, args=(recorder,))
+    t = threading.Thread(target=Lifecircle.listen_to_interupt_voice, args=(recorder,))
     t.start()
 
     #do recorder.listen() in thread
@@ -52,8 +53,8 @@ def main():
     while True:
         print("\n- waiting for you ...")
         recorder.event.clear()
-        recorder.event.wait()
-
+        recorder.event.wait()    
+         
         audio = recorder.audio
         
         stt_text = stt.stt_wrapper(audio=audio)
@@ -65,6 +66,8 @@ def main():
         tts_text = tts.tts_wrapper(brain_text=brain_text)
         
         player.play_wrapper(tts=tts_text)
+        
+        Lifecircle.running = False
                                      
 def print_user(stt_text):
     print("\n" + colorama.Fore.YELLOW + "("+ config["chat"]["your_name"] +"):", stt_text + colorama.Style.RESET_ALL)

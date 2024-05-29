@@ -1,5 +1,7 @@
 #contextlib um "hello from the pygame community" zu entfernen
 import contextlib
+
+from assistant.lifecircle import Lifecircle
 with contextlib.redirect_stdout(None):
     from pygame import mixer
     
@@ -12,7 +14,6 @@ from pygame import mixer
 from pydub import AudioSegment
 from gtts import gTTS
 
-from assistant.interrupt import Interrupt
 
 
 class Player:
@@ -58,7 +59,7 @@ class Player:
                 Player.pause()              
             for chunk in sentence.stream():
                 if chunk:
-                    if Interrupt.interruppted:
+                    if Lifecircle.interruppted:
                         break
                     # Convert mp3 data to raw audio data
                     audio = AudioSegment.from_mp3(io.BytesIO(chunk))
@@ -92,7 +93,7 @@ class Player:
             if counter == 0:
                 Player.pause()          
             for chunk in sentence:
-                if Interrupt.interruppted:
+                if Lifecircle.interruppted:
                     return
                 # Chunk abspielen
                 stream.write(chunk.cpu().numpy().tobytes())
@@ -109,7 +110,7 @@ class Player:
                         
         while Player.queing or not Player.audio_queue.empty():
             
-            if Interrupt.interruppted:
+            if Lifecircle.interruppted:
                 break
             
             try:
@@ -132,7 +133,7 @@ class Player:
                 # Read audio data in chunks and write to the stream
                 data = audio_file.readframes(1024)
                 while data:
-                    if Interrupt.interruppted:
+                    if Lifecircle.interruppted:
                         break
                     stream.write(data)
                     data = audio_file.readframes(1024)
@@ -165,7 +166,7 @@ class Player:
             if counter == 0:
                 Player.pause()          
             for chunk in sentence:
-                if Interrupt.interruppted:
+                if Lifecircle.interruppted:
                     break
                 stream.write(chunk)
             counter += 1

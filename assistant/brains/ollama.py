@@ -1,7 +1,7 @@
 import colorama
 from ollama import Client
 
-from assistant.interrupt import Interrupt
+from assistant.lifecircle import Lifecircle
 from assistant.player import Player
 
 
@@ -33,7 +33,7 @@ class Ollama:
             count = 0
             full_response = ""
             for chunk in stream:
-                if Interrupt.interruppted:
+                if Lifecircle.interruppted:
                     break
                 if chunk['message']['content'] is not None:
                     if count == 0:
