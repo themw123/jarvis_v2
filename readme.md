@@ -27,7 +27,7 @@ Jarvis is your conversational assistant available as a console programm. It can 
 - best practise by saying something before the startword or stopword and wait for a short moment. For example "okay ... [startword]"
 - keeps conversation until next restart
 
-## Settings
+## Settings:
 
 - all settings like path to models (whisper, piper and xtts) can be specified in config.json
 
