@@ -1,6 +1,6 @@
 # Jarvis
 
-Jarvis is your conversational assistant. Try it out, it can be used all local.
+Jarvis is your conversational assistant. It can be used all local. For now only tested on Windows 11.
 
 - Voice To Text 📝:
 
@@ -11,6 +11,7 @@ Jarvis is your conversational assistant. Try it out, it can be used all local.
 - Brain 🧠:
 
   - ollama(local)
+  - groq
   - chatGPT
 
 - Text to Speech 💬:
@@ -19,18 +20,25 @@ Jarvis is your conversational assistant. Try it out, it can be used all local.
   - xtts (local)
   - google gtts
 
-Place the Models in models/
+## How to Use:
 
-- whisper/
-- Piper/
-- XTTS-v2/
+- start recording by saying the startword or startkey
+- interrupt assistent by saving the stopword or startkey
+- best practise by saying something before the startword or stopword and wait for a short moment. For example "okay ... [startword]"
+- keeps conversation until next restart
 
-Where to get?
+## Settings
+
+- all settings like path to models (whisper, piper and xtts) can be specified in config.json
+
+- copy and rename example.config.json to config.json
+
+## Where to get models?
 
 - https://github.com/SYSTRAN/faster-whisper
 - https://github.com/rhasspy/piper
 - https://huggingface.co/coqui/XTTS-v2
 
-all about Ollama:
+## All about Ollama:
 
 - https://github.com/ollama/ollama

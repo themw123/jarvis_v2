@@ -48,16 +48,16 @@ class Recorder:
         
     
 
-    def listen_on_keyboard(self):
+    def listen_on_keyboard(self, config):
         while True: 
-            # coll down. Otherwise the space key is recognized immediately from last round
+            # cool down. Otherwise the space key is recognized immediately from last round
             time.sleep(1)       
             #keyboard.wait('ctrl+space', suppress=True, trigger_on_release=True)
             #deswegen lieber mit schleife
-            while not keyboard.is_pressed('ctrl + space'):
+            while not keyboard.is_pressed(config["recorder"]["startkey"]):
                 time.sleep(0.1)
             # warte bis space nicht mehr gedrückt ist
-            while keyboard.is_pressed('ctrl + space'):
+            while keyboard.is_pressed(config["recorder"]["startkey"]):
                 time.sleep(0.1)
     
             self.frames = []
@@ -65,7 +65,7 @@ class Recorder:
             self.__before_recording()
             Player.play_record_start()
             print("- listen...")
-            while not keyboard.is_pressed('ctrl + space'):
+            while not keyboard.is_pressed(config["recorder"]["startkey"]):
                 # Record data audio data
                 data = self.stream.read(self.chunk)
                 # Add the data to a buffer (a list of chunks)
@@ -79,11 +79,11 @@ class Recorder:
 
     def listen_on_voice(self, mode):
         while True:
-            keyword = self.config["stt"]["keyword"]
-            breakword = self.config["stt"]["breakword"]
+            startword = self.config["recorder"]["startword"]
+            stopword = self.config["recorder"]["stopword"]
     
             if mode == "interrupt":
-                keyword = breakword
+                startword = stopword
             
             # Erstelle ein Recognizer-Objekt
             recognizer = sr.Recognizer()
@@ -96,7 +96,7 @@ class Recorder:
                     self.audio = audio_data  
                     try:
                         text = recognizer.recognize_google(audio_data, language="de-DE")
-                        if keyword.lower() in text.lower():
+                        if startword.lower() in text.lower():
                             #if it is ready to record voice again but is still talking from the last round
                             # not needed in listen_on_keyboard because there interrupting is handlet by the Interrupt listener
                             #Interrupt.do_interrupt()

@@ -7,8 +7,8 @@ class Interrupt:
     interruppted = False        
         
     @staticmethod    
-    def listen_to_interupt_keyboard():
-        keyboard.add_hotkey('ctrl+x', Interrupt.do_interrupt)  
+    def listen_to_interupt_keyboard(config):
+        keyboard.add_hotkey(config["recorder"]["startkey"], Interrupt.do_interrupt)  
           
     @staticmethod    
     def listen_to_interupt_voice(recorder):

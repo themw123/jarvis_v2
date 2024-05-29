@@ -23,8 +23,8 @@ def main():
         config = json.load(f)
         
     print("\n- start assistant...\n")
-    print("- start recording by saying '"+ config["stt"]["keyword"]+"' or ctrl + space")
-    print("- stop recording by saying '"+config["stt"]["breakword"]+"' or ctrl + x")    
+    print("- start recording by saying '"+ config["recorder"]["startword"]+"' or "+config["recorder"]["startkey"])
+    print("- stop recording by saying '"+config["recorder"]["stopword"]+"' or "+config["recorder"]["startkey"]+"\n")    
         
     colorama.init()
     
@@ -36,15 +36,13 @@ def main():
     stt = Stt(config)
     tts = Tts(config)
 
-    #default ctrl + space is used for interrupting. For different key and without start recording immediately use this thread.
-    #Interrupt.listen_to_interupt_keyboard()
-    
-    #for voice interrupting with breakword use this thread, but only works with headphones on
+    #for keyboard interrupting use start key
+    #for voice interrupting with stopword. Only works with headphones on
     t = threading.Thread(target=Interrupt.listen_to_interupt_voice, args=(recorder,))
     t.start()
 
     #do recorder.listen() in thread
-    listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard)
+    listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard, args=(config,))
     listen_keyboard.start()
     
     listen_voice = threading.Thread(target=recorder.listen_on_voice, args=("default",))

@@ -1,9 +1,15 @@
 {
+  "recorder": {
+    "description": "Startkey is also stopkey. Stopword only works with headphones on. It is disabled for the moment.",
+    "startkey": "ctrl+space",
+    "startword": "record",
+    "stopword": "stop"
+  },
   "chat": {
     "description": "role_name: AI name in Chat, your_name: Your Name in Chat, role: Assignment of a role for the AI",
     "role_name": "Assistent",
     "your_name": "Max",
-    "role": "Your are Jarvis, a helpful assistent."
+    "role": "Your name is Jarvis and you are a helpful assistant."
   },
   "brain": {
     "active": "ollama",
@@ -21,10 +27,7 @@
     }
   },
   "stt": {
-    "description": "breakword only works with headphones on. It is disabled for the moment.",
     "active": "whisper_local",
-    "keyword": "record",
-    "breakword": "stop",
     "whisper_local": {
       "description": "tiny, base, small, medium, large-v3",
       "location": "E:/models/whisper/",
