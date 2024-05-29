@@ -2,8 +2,8 @@
   "chat": {
     "description": "role_name: AI name in Chat, your_name: Your Name in Chat, role: Assignment of a role for the AI",
     "role_name": "Assistent",
-    "your_name": "James",
-    "role": ""
+    "your_name": "Max",
+    "role": "Your are Jarvis, a helpful assistent."
   },
   "brain": {
     "active": "ollama",
@@ -12,15 +12,22 @@
       "model": "llama3:8b",
       "keep_alive": "60m"
     },
+    "groq": {
+      "model": "llama3-70b-8192",
+      "api_key": "gsk_xxx"
+    },
     "chatgpt": {
       "api_key": "sk-proj-xxx"
     }
   },
   "stt": {
-    "active": "google",
+    "description": "breakword only works with headphones on. It is disabled for the moment.",
+    "active": "whisper_local",
+    "keyword": "record",
+    "breakword": "stop",
     "whisper_local": {
       "description": "tiny, base, small, medium, large-v3",
-      "location": "models/Whisper/",
+      "location": "E:/models/whisper/",
       "model": "medium",
       "gpu": true,
       "language": "de"
@@ -35,19 +42,19 @@
     }
   },
   "tts": {
-    "active": "xtts",
+    "active": "piper",
     "google": {
       "description": "For language: de, en, es-es, ...",
       "language": "de",
       "amount_input_sentences": 3
     },
     "xtts": {
-      "location": "models/XTTS-v2",
-      "voice": "marvin",
+      "location": "E:/models/XTTS-v2",
+      "voice": "fatih",
       "amount_input_sentences": 4
     },
     "piper": {
-      "location": "models/Piper",
+      "location": "E:/models/Piper",
       "description": "Streaming for Piper is not implemented yet. So best for amount_input_sentences ist 1",
       "voice": "default_german_voice",
       "amount_input_sentences": 1
