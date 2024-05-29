@@ -5,6 +5,7 @@ import subprocess
 import tempfile
 import threading
 from gtts import gTTS
+from assistant.lifecircle import Lifecircle
 from assistant.player import Player
 
 from TTS.tts.configs.xtts_config import XttsConfig
@@ -91,6 +92,9 @@ class Tts:
 
         
         for chunk in brain_text:
+            
+            if Lifecircle.interruppted:
+                break
                 
             output_file = tempfile.NamedTemporaryFile(delete=False, dir="./temp_audio", suffix=".wav")
             

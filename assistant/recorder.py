@@ -95,10 +95,6 @@ class Recorder:
                     try:
                         text = recognizer.recognize_google(audio_data, language="de-DE")
                         if startword.lower() in text.lower():
-                            #if it is ready to record voice again but is still talking from the last round
-                            # not needed in listen_on_keyboard because there interrupting is handlet by the Interrupt listener
-                            #Lifecircle.do_interrupt()
-                            
                             self.__before_recording()
                             if mode == "interrupt":
                                 break
