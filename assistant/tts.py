@@ -20,7 +20,7 @@ class Tts:
         
         self.config = config
         if self.config["tts"]["active"] == "xtts":
-            print("\n- starting xtts model...\n")
+            print("\n- starting xtts model ...")
             config = XttsConfig()
             config.load_json(self.config["tts"]["xtts"]["location"] + "/config.json")
             self.xtts_model = Xtts.init_from_config(config)

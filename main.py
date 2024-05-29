@@ -1,6 +1,7 @@
 
 import json
 import threading
+import time
 
 import colorama
 
@@ -29,7 +30,9 @@ def main():
 
 
     print("\n- start assistant...\n")
-
+    print("- start recording by saying '"+ config["stt"]["keyword"]+"' or ctrl + space")
+    print("- stop recording by saying '"+config["stt"]["breakword"]+"' or ctrl + x")
+    
     recorder = Recorder(config)
     player = Player(config)
 
@@ -42,30 +45,29 @@ def main():
     
     Interrupt.listen_to_interupt_keyboard()
     # only works with headphones on
-    #t = threading.Thread(target=Interrupt.listen_to_interupt_voice, args=(recorder,))
-    #t.start()
+    t = threading.Thread(target=Interrupt.listen_to_interupt_voice, args=(recorder,))
+    t.start()
 
+
+    #do recorder.listen() in thread
+    listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard)
+    listen_keyboard.start()
+    
+    listen_voice = threading.Thread(target=recorder.listen_on_voice, args=("default",))
+    listen_voice.start()
+    
 
     while True:
+        print("\n- waiting for you ...")
         recorder.event.clear()
-        
-        #do recorder.listen() in thread
-        #listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard)
-        #listen_keyboard.start()
-        #listen_keyboard.join()
-        
-        listen_voice = threading.Thread(target=recorder.listen_on_voice, args=("default",))
-        listen_voice.start()
-        #listen_voice.join()
     
-        #wait until one of the threads is finished
+
         recorder.event.wait()
-        
+
 
         audio = recorder.audio
         
         stt_text = stt.stt_wrapper(audio=audio)
-
         print_user(stt_text)
         print_assistant()
         

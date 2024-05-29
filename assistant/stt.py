@@ -11,7 +11,7 @@ class Stt:
     def __init__(self, config):
         self.config = config
         if self.config["stt"]["active"] == "whisper_local":
-            print('\n- starting whisper_local model\n')
+            print('\n- starting whisper_local model')
             device = "cuda" if self.config["stt"]["whisper_local"]["gpu"] else "cpu"
             compute_type = "float16" if device == "cuda" else "int8"
             

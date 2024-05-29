@@ -57,6 +57,6 @@ class Ollama:
         print(colorama.Style.RESET_ALL)
 
     def __wakeup_ollama(self):
-        print("\n- waking up ollama\n")
+        print("\n- waking up ollama")
 
         self.client.generate(model=self.config["brain"]["ollama"]["model"],keep_alive=self.config["brain"]["ollama"]["keep_alive"])
