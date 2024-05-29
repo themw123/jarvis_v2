@@ -16,6 +16,9 @@ from assistant.stt import Stt
 
 def main():
 
+    print("\n- start assistant...\n")
+    print("- start recording by saying '"+ config["stt"]["keyword"]+"' or ctrl + space")
+    print("- stop recording by saying '"+config["stt"]["breakword"]+"' or ctrl + x")
     
     global config, recorder, player, brain, stt, tts
 
@@ -26,11 +29,6 @@ def main():
         config = json.load(f)
         
     colorama.init()
-
-
-    print("\n- start assistant...\n")
-    print("- start recording by saying '"+ config["stt"]["keyword"]+"' or ctrl + space")
-    print("- stop recording by saying '"+config["stt"]["breakword"]+"' or ctrl + x")
     
     recorder = Recorder(config)
     player = Player(config)
