@@ -8,7 +8,7 @@ executables = [Executable("main.py", icon="img/ai.ico", target_name="assisstant"
 # Weitere Optionen (optional)
 options = {
     'build_exe': {
-        'packages': ["srsly", "blis", "spacy"],
+        'packages': ["srsly", "blis", "spacy", "deepspeed"],
         'include_files': ["config.json", "sound", "img", "temp_audio"],  # Liste der zusätzlich einzuschließenden Dateien
         'excludes': [],       # Liste von Modulen, die nicht eingeschlossen werden sollen
     }
