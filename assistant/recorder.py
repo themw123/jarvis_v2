@@ -78,29 +78,32 @@ class Recorder:
             self.__after_recording()
 
     def listen_on_voice(self, mode):
+        recognizerStartword = sr.Recognizer()
+        recognizerSpokenText = sr.Recognizer()
+        recognizerSpokenText.pause_threshold = self.config["recorder"]["pause_threshold"]
+        recognizerSpokenText.non_speaking_duration = self.config["recorder"]["non_speaking_duration"]
         while True:
             startword = self.config["recorder"]["startword"]
             stopword = self.config["recorder"]["stopword"]
     
             if mode == "interrupt":
                 startword = stopword
-            
-            recognizer = sr.Recognizer()
 
             with sr.Microphone() as source:
                 while True:
-                    recognizer.adjust_for_ambient_noise(source, duration=3)
-                    audio_data = recognizer.listen(source)
+                    recognizerStartword.adjust_for_ambient_noise(source, duration=1)
+                    recognizerSpokenText.adjust_for_ambient_noise(source, duration=1)
+                    audio_data = recognizerStartword.listen(source)
                     self.audio = audio_data  
                     try:
-                        text = recognizer.recognize_google(audio_data, language="de-DE")
+                        text = recognizerStartword.recognize_google(audio_data, language="de-DE")
                         if startword.lower() in text.lower():
                             self.__before_recording()
                             if mode == "interrupt":
                                 break
                             Player.play_record_start()
                             print("- listen...")
-                            audio_data = recognizer.listen(source)
+                            audio_data = recognizerSpokenText.listen(source)
                             self.audio = audio_data
                             self.__after_recording()
                             break
