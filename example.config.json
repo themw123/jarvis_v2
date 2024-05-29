@@ -1,9 +1,12 @@
 {
   "recorder": {
-    "description": "Startkey is also stopkey. Stopword only works with headphones on. It is disabled for the moment.",
+    "description": "Stopword only works with headphones on. It is disabled for the moment. The int values are just for the real audio that should get translated to test not for the recognition of start word",
     "startkey": "ctrl+space",
+    "stopkey": "ctrl+x",
     "startword": "record",
-    "stopword": "stop"
+    "stopword": "stop",
+    "pause_threshold": 2,
+    "non_speaking_duration": 2
   },
   "chat": {
     "description": "role_name: AI name in Chat, your_name: Your Name in Chat, role: Assignment of a role for the AI",
