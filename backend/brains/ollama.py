@@ -19,34 +19,47 @@ class Ollama:
         return self.__ask_generator(stt)
 
     def __ask_generator(self, stt):
-        try:            
+        try:
+            
             self.messages.append(
                 {"role": "user", "content": stt},
-            )
-            stream = self.client.chat(
-                model=self.config["brain"]["ollama"]["model"],
-                messages=self.messages,
-                stream=True,
-                keep_alive=self.config["brain"]["ollama"]["keep_alive"],
-            )
             
-            count = 0
-            full_response = ""
-            for chunk in stream:
-                if Lifecircle.interruppted:
-                    break
-                if chunk['message']['content'] is not None:
-                    if count == 0:
-                        #warte sound abspielen
-                        Player.play_wait()
-                    content = chunk['message']['content']
-                    full_response += content
-                    print(content, end="", flush=True)
-                    yield content
-                    count += 1             
-            self.messages.append({'role': 'system', 'content': full_response})
-            print()
-            self.__reset__colorama()
+            )
+            llama3_8b_empty_response = True
+            
+            #bug with llama3:8b. Sometimes it return empty response like "". So we ask it till it will return something
+            while llama3_8b_empty_response:
+                
+                stream = self.client.chat(
+                    model=self.config["brain"]["ollama"]["model"],
+                    messages=self.messages,
+                    stream=True,
+                    keep_alive=self.config["brain"]["ollama"]["keep_alive"],
+                )
+                
+                count = 0
+                full_response = ""
+                for chunk in stream:
+                    if Lifecircle.interruppted:
+                        break
+                    if chunk['message']['content'] is not None:
+                        #related to llama3:8b bug
+                        if chunk['message']['content'] == "":
+                            continue
+                        else:
+                            llama3_8b_empty_response = False
+                        
+                        if count == 0:
+                            #warte sound abspielen
+                            Player.play_wait()
+                        content = chunk['message']['content']
+                        full_response += content
+                        print(content, end="", flush=True)
+                        yield content
+                        count += 1             
+                self.messages.append({'role': 'system', 'content': full_response})
+                print()
+                self.__reset__colorama()
 
         except KeyboardInterrupt:
             raise KeyboardInterrupt
