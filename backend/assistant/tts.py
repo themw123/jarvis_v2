@@ -6,7 +6,6 @@ import tempfile
 import threading
 from gtts import gTTS
 from assistant.lifecircle import Lifecircle
-from assistant.player import Player
 
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
@@ -17,15 +16,16 @@ warnings.filterwarnings("ignore", category=UserWarning)
             
 class Tts:
     
-    def __init__(self, config):
+    def __init__(self, server_config, client_config):
         
-        self.config = config
-        if self.config["tts"]["active"] == "xtts":
+        self.server_config = server_config
+        self.client_config = client_config
+        if self.client_config["tts"]["active"] == "xtts":
             print("\n- starting xtts model ...")
-            config = XttsConfig()
-            config.load_json(self.config["tts"]["xtts"]["location"] + "/config.json")
-            self.xtts_model = Xtts.init_from_config(config)
-            self.xtts_model.load_checkpoint(config, checkpoint_dir=self.config["tts"]["xtts"]["location"], use_deepspeed=True)
+            server_config = XttsConfig()
+            server_config.load_json(self.server_config["tts"]["xtts"]["location"] + "/config.json")
+            self.xtts_model = Xtts.init_from_config(server_config)
+            self.xtts_model.load_checkpoint(server_config, checkpoint_dir=self.server_config["tts"]["xtts"]["location"], use_deepspeed=True)
             self.xtts_model.cuda()
         
                 
@@ -35,22 +35,22 @@ class Tts:
                         
     def tts_wrapper(self, brain_text):
         
-        if self.config["tts"]["active"] == "google":
+        if self.client_config["tts"]["active"] == "google":
             return self.__tts_google(brain_text)
-        elif self.config["tts"]["active"] == "xtts":
+        elif self.client_config["tts"]["active"] == "xtts":
             return self.__tts_xtts(brain_text)
-        elif self.config["tts"]["active"] == "piper":
+        elif self.client_config["tts"]["active"] == "piper":
             #return self.__tts_piper_stream(brain_text)
             self.__tts_piper(brain_text)
         else:
-            raise Exception(self.config["tts"]["active"] + ": This tts api type does not exist")  
+            raise Exception(self.client_config["tts"]["active"] + ": This tts api type does not exist")  
 
 
     
     def __tts_google(self, brain_text):
              
         for chunk in brain_text:
-            yield gTTS(text=chunk, lang=self.config["tts"]["google"]["language"], slow=False)
+            yield gTTS(text=chunk, lang=self.server_config["tts"]["google"]["language"], slow=False)
 
 
         
@@ -80,11 +80,11 @@ class Tts:
         
         operating_system = platform.system()
         if operating_system == "Windows":
-            piper_binary = self.config["tts"]["piper"]["location"]+"/piper.exe"
+            piper_binary = self.server_config["tts"]["piper"]["location"]+"/piper.exe"
         else:
-            piper_binary = self.config["tts"]["piper"]["location"]+"/piper"
+            piper_binary = self.server_config["tts"]["piper"]["location"]+"/piper"
             
-        voice_path = self.config["tts"]["piper"]["location"] +"/voices/"+self.config["tts"]["piper"]["voice"]
+        voice_path = self.server_config["tts"]["piper"]["location"] +"/voices/"+self.server_config["tts"]["piper"]["voice"]
 
         files = os.listdir(voice_path)
         model_path = next((os.path.join(voice_path, f) for f in files if f.endswith('.onnx')), None)
@@ -123,11 +123,11 @@ class Tts:
         
         operating_system = platform.system()
         if operating_system == "Windows":
-            piper_binary = self.config["tts"]["piper"]["location"]+"/piper.exe"
+            piper_binary = self.server_config["tts"]["piper"]["location"]+"/piper.exe"
         else:
-            piper_binary = self.config["tts"]["piper"]["location"]+"/piper"
+            piper_binary = self.server_config["tts"]["piper"]["location"]+"/piper"
             
-        voice_path = self.config["tts"]["piper"]["location"] +"/voices/"+self.config["tts"]["piper"]["voice"]
+        voice_path = self.server_config["tts"]["piper"]["location"] +"/voices/"+self.server_config["tts"]["piper"]["voice"]
 
         files = os.listdir(voice_path)
         model_path = next((os.path.join(voice_path, f) for f in files if f.endswith('.onnx')), None)
@@ -157,11 +157,11 @@ class Tts:
                  
                  
     def __xtts_load_voice(self):
-        filename = self.config["tts"]["xtts"]["voice"]
+        filename = self.server_config["tts"]["xtts"]["voice"]
         try:
-            with open(self.config["tts"]["xtts"]["location"]+"/voices/" + filename + '_embedding.pkl', 'rb') as f:
+            with open(self.server_config["tts"]["xtts"]["location"]+"/voices/" + filename + '_embedding.pkl', 'rb') as f:
                 speaker_embedding = pickle.load(f)
-            with open(self.config["tts"]["xtts"]["location"]+"/voices/" + filename + '_gpt_cond_latent.pkl', 'rb') as f:
+            with open(self.server_config["tts"]["xtts"]["location"]+"/voices/" + filename + '_gpt_cond_latent.pkl', 'rb') as f:
                 gpt_cond_latent = pickle.load(f)
             return speaker_embedding, gpt_cond_latent
         except:

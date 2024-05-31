@@ -194,22 +194,22 @@ class Player:
 
     @staticmethod
     def play_initial():
-        mixer.music.load("sound/initial.mp3")
+        mixer.music.load("client/sound/initial.mp3")
         mixer.music.play()
         
     @staticmethod
     def play_initial2():
-        mixer.music.load("sound/initial2.wav")
+        mixer.music.load("client/sound/initial2.wav")
         mixer.music.play()
     
     @staticmethod
     def play_initial3():
-        mixer.music.load("sound/initial3.wav")
+        mixer.music.load("client/sound/initial3.wav")
         mixer.music.play()
             
     @staticmethod
     def play_wait():
-        mixer.music.load("sound/wait.mp3")
+        mixer.music.load("client/sound/wait.mp3")
         mixer.music.play()
     @staticmethod
     def pause():
@@ -217,12 +217,12 @@ class Player:
         
     @staticmethod
     def play_record_start():
-        mixer.music.load("sound/recording-start.wav")
+        mixer.music.load("client/sound/recording-start.wav")
         mixer.music.set_volume(0.3) 
         mixer.music.play()
     
     @staticmethod
     def play_record_end():
-        mixer.music.load("sound/recording-end.wav")
+        mixer.music.load("client/sound/recording-end.wav")
         mixer.music.set_volume(0.3) 
         mixer.music.play()    

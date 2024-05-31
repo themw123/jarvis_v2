@@ -1,8 +1,11 @@
 
 import json
+import sys
 import threading
 
 import colorama
+import requests
+import urllib3
 
 from assistant.lifecircle import Lifecircle
 
@@ -17,7 +20,7 @@ from assistant.stt import Stt
 def main():
     global config, recorder, player, brain, stt, tts
 
-    config_path = "config.json"
+    config_path = "client/config.json"
     
     with open(config_path, 'r') as f:
         config = json.load(f)
@@ -31,11 +34,12 @@ def main():
     recorder = Recorder(config)
     player = Player(config)
 
-    brain = Brain(config, config_path)
+    brain = Brain(config)
     
     stt = Stt(config)
     tts = Tts(config)
-
+    
+    init_backend()
 
     Lifecircle.listen_to_interupt_keyboard(config)
     #for voice interrupting with stopword. Only works with headphones on
@@ -56,17 +60,33 @@ def main():
          
         audio = recorder.audio
         
-        stt_text = stt.stt_wrapper(audio=audio)
+        stt_text = stt.request_backend_stt(audio=audio, rate=recorder.rate, sample_width=recorder.p.get_sample_size(recorder.format))
         print_user(stt_text)
         print_assistant()
         
-        brain_text = brain.brain_wrapper(stt=stt_text)
-
-        tts_text = tts.tts_wrapper(brain_text=brain_text)
+        brain_text = brain.request_backend_brain(stt=stt_text)
         
-        player.play_wrapper(tts=tts_text)
+        for chunk in brain_text:
+            print(chunk, end="", flush=True)
+
+        #tts_text = tts.tts_wrapper(brain_text=brain_text)
+        
+        #player.play_wrapper(tts=tts_text)
         
         Lifecircle.running = False
+
+
+def init_backend():
+    print("\n- init backend...")
+    url = config["backend"]["url"] + '/init'
+    headers = {'Content-Type': 'application/json'}
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(config))
+        if response.status_code != 200:
+            raise SystemExit("- Init failed")
+    except Exception as e:
+        print("- Connection to backend failed.")
+        raise SystemExit
                                      
 def print_user(stt_text):
     print("\n" + colorama.Fore.YELLOW + "("+ config["chat"]["your_name"] +"):", stt_text + colorama.Style.RESET_ALL)

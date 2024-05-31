@@ -2,16 +2,16 @@ import colorama
 from ollama import Client
 
 from assistant.lifecircle import Lifecircle
-from assistant.player import Player
 
 
 class Ollama:
 
-    def __init__(self, config, messages: list):
-        self.config = config
+    def __init__(self, server_config, client_config, messages: list):
+        self.server_config = server_config
+        self.client_config = client_config
         self.messages = messages
-        if self.config["brain"]["active"] == "ollama":
-            self.client = Client(host=self.config["brain"]["ollama"]["url"])
+        if self.client_config["brain"]["active"] == "ollama":
+            self.client = Client(host=self.server_config["brain"]["ollama"]["url"])
             self.__wakeup_ollama()
 
             
@@ -24,10 +24,10 @@ class Ollama:
                 {"role": "user", "content": stt},
             )
             stream = self.client.chat(
-                model=self.config["brain"]["ollama"]["model"],
+                model=self.server_config["brain"]["ollama"]["model"],
                 messages=self.messages,
                 stream=True,
-                keep_alive=self.config["brain"]["ollama"]["keep_alive"],
+                keep_alive=self.server_config["brain"]["ollama"]["keep_alive"],
             )
             
             count = 0
@@ -38,10 +38,11 @@ class Ollama:
                 if chunk['message']['content'] is not None:
                     if count == 0:
                         #warte sound abspielen
-                        Player.play_wait()
+                        #Player.play_wait()
+                        pass
                     content = chunk['message']['content']
                     full_response += content
-                    print(content, end="", flush=True)
+                    #print(content, end="", flush=True)
                     yield content
                     count += 1             
             self.messages.append({'role': 'system', 'content': full_response})

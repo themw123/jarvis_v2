@@ -74,7 +74,8 @@ class Recorder:
                 self.frames.append(data)
             
             audio_data = b''.join(self.frames)
-            self.audio = sr.AudioData(audio_data, sample_rate=self.rate, sample_width=self.p.get_sample_size(self.format))
+            #self.audio = sr.AudioData(audio_data, sample_rate=self.rate, sample_width=self.p.get_sample_size(self.format))
+            self.audio = audio_data
             self.__after_recording()
 
     def listen_on_voice(self, mode):

@@ -4,19 +4,20 @@ from faster_whisper import WhisperModel
 from openai import OpenAI
 import speech_recognition as sr
 from speech_recognition import AudioData, Recognizer
-from assistant.player import Player
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 class Stt:
-    def __init__(self, config):
-        self.config = config
-        if self.config["stt"]["active"] == "whisper_local":
+
+    def __init__(self, server_config, client_config):
+        self.server_config = server_config
+        self.client_config = client_config
+        if self.client_config["stt"]["active"] == "whisper_local":
             print('\n- starting whisper_local model')
-            device = "cuda" if self.config["stt"]["whisper_local"]["gpu"] else "cpu"
+            device = "cuda" if self.server_config["stt"]["whisper_local"]["gpu"] else "cpu"
             compute_type = "float16" if device == "cuda" else "int8"
             
             self.model = WhisperModel(
-                model_size_or_path=self.config["stt"]["whisper_local"]["location"] + self.config["stt"]["whisper_local"]["model"],
+                model_size_or_path=self.server_config["stt"]["whisper_local"]["location"] + self.server_config["stt"]["whisper_local"]["model"],
                 device=device,
                 compute_type=compute_type
             )
@@ -25,15 +26,15 @@ class Stt:
 
     def stt_wrapper(self, audio: AudioData):
         print("- interpret...")
-        if self.config["stt"]["active"] == "whisper_local":
+        if self.client_config["stt"]["active"] == "whisper_local":
             text = self.__stt_whisper_local(audio)
-        elif self.config["stt"]["active"] == "whisper":
+        elif self.client_config["stt"]["active"] == "whisper":
             text = self.__stt_whisper(audio)
-        elif self.config["stt"]["active"] == "google":
+        elif self.client_config["stt"]["active"] == "google":
             r = Recognizer()
             text = self.__stt_google(r, audio)
         else:
-            raise Exception(self.config["stt"]["active"] + ": This stt api type does not exist") 
+            raise Exception(self.client_config["stt"]["active"] + ": This stt api type does not exist") 
         
         text = text.replace("\n", "")
         
@@ -81,13 +82,13 @@ class Stt:
         try:
             with open(temp_file.name, "rb") as audio_file:
                 client = OpenAI(
-                    api_key=self.config["brain"]["chatgpt"]["api_key"],
+                    api_key=self.server_config["brain"]["chatgpt"]["api_key"],
                 )
                 text = client.audio.transcriptions.create(
                     file = audio_file,
                     model = "whisper-1",
                     response_format="text",
-                    language=self.config["stt"]["whisper"]["language"]
+                    language=self.server_config["stt"]["whisper"]["language"]
                 )
             return text
         except IOError as file_error:
@@ -105,7 +106,7 @@ class Stt:
     def __stt_google(self, r: Recognizer, audio: AudioData):
         try:
             #nur google ist ohne api key.
-            return r.recognize_google(audio, language=self.config["stt"]["google"]["language"])
+            return r.recognize_google(audio, language=self.server_config["stt"]["google"]["language"])
         except sr.UnknownValueError:
             print("- Sprache konnte nicht erkannt werden.\n")
         except sr.RequestError:
