@@ -12,3 +12,20 @@ def stream_data():
             yield chunk
 
     return Response(generate(), mimetype="application/octet-stream")
+
+
+
+
+API aufbau, beispiel stt mit whisper_local:
+im client einfach anstatt dem hier
+segments, info = self.model.transcribe(
+  audio_file,
+  beam_size=5
+)
+den flask server callen und im server dann den code ausführen
+
+
+bei tts_piper läuft das bischen anders:
+brain_text ganz normal mittels client an unser backend schicken
+im backend dann dateie in schleife auslesen(main thread) und am anfang einen thread starten der die da rein schreibt.
+also genau anders rum. vorher wa das auslesen/abspielen im thread
