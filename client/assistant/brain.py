@@ -1,3 +1,4 @@
+import colorama
 import requests
 import json
 
@@ -19,3 +20,4 @@ class Brain:
         for chunk in response.iter_content(1024):
             if chunk:
                 yield chunk.decode('utf-8')+ " " 
+        print(colorama.Style.RESET_ALL)

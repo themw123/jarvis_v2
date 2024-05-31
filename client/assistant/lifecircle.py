@@ -1,5 +1,4 @@
 
-import keyboard
 
 
 
@@ -9,12 +8,13 @@ class Lifecircle:
         
     @staticmethod    
     def listen_to_interupt_keyboard(config):
-        keyboard.add_hotkey(config["recorder"]["stopkey"], Lifecircle.do_interrupt)  
-          
+        #keyboard.add_hotkey(config["recorder"]["stopkey"], Lifecircle.do_interrupt)  
+        pass
     @staticmethod    
     def listen_to_interupt_voice(recorder):
         while True:
             recorder.listen_on_voice("interrupt")
+            print("\n\nstoppe")
             Lifecircle.do_interrupt()
     
     @staticmethod
