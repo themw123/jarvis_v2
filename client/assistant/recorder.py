@@ -1,8 +1,8 @@
 import threading
 import time
-import keyboard 
 import pyaudio
 import speech_recognition as sr
+from pynput import keyboard
 
 from assistant.lifecircle import Lifecircle
 from assistant.player import Player
@@ -23,6 +23,10 @@ class Recorder:
         
         self.event = threading.Event()
 
+        self.ctrl_pressed = False
+        self.space_pressed = False
+        
+        self.recording = False
                 
         self.__init_recorder()
 
@@ -46,32 +50,68 @@ class Recorder:
         self.event.set()
 
 
-        
-    
+    def on_press(self, key):
+        try:
+            if key == keyboard.Key.ctrl_l:
+                self.ctrl_pressed = True
+            elif key == keyboard.Key.space:
+                self.space_pressed = True
 
-    def listen_on_keyboard(self, config):        
+            if self.ctrl_pressed and self.space_pressed:
+                self.ctrl_pressed = False
+                self.space_pressed = False
+                if self.recording:
+                    self.recording = False
+                else:
+                    self.recording = True
+
+        except AttributeError:
+            pass
+
+            
+    def on_release(self, key):
+        try:
+            if key == keyboard.Key.ctrl_l:
+                self.ctrl_pressed = False
+            elif key == keyboard.Key.space:
+                self.space_pressed = False
+        except AttributeError:
+            pass
+
+
+    def listen_on_keyboard(self, config):   
+        
+        listener = keyboard.Listener(
+            on_press=self.on_press,
+            on_release=self.on_release)
+        listener.start()
+             
         while True:
             while Lifecircle.running:
                 time.sleep(0.1)
               
             #keyboard.wait is buggy  
             #keyboard.wait('ctrl+space', suppress=True, trigger_on_release=True)
-            while not keyboard.is_pressed(config["recorder"]["startkey"]):
+
+            while not self.recording:
                 time.sleep(0.1)
-            # wait till released
-            while keyboard.is_pressed(config["recorder"]["startkey"]):
-                time.sleep(0.1)
-    
+                     
             self.frames = []
     
             self.__before_recording()
             Player.play_record_start()
             print("- listen...")
-            while not keyboard.is_pressed(config["recorder"]["startkey"]):
+            
+            #while not keyboard.is_pressed(config["recorder"]["startkey"]):
                 # Record data audio data
-                data = self.stream.read(self.chunk)
+            #    data = self.stream.read(self.chunk)
                 # Add the data to a buffer (a list of chunks)
-                self.frames.append(data)
+            #    self.frames.append(data)
+            
+            while self.recording:    
+                data = self.stream.read(self.chunk)
+                self.frames.append(data)   
+    
             
             audio_data = b''.join(self.frames)
             #self.audio = sr.AudioData(audio_data, sample_rate=self.rate, sample_width=self.p.get_sample_size(self.format))
@@ -105,7 +145,8 @@ class Recorder:
                             Player.play_record_start()
                             print("- listen...")
                             audio_data = recognizerSpokenText.listen(source)
-                            self.audio = audio_data
+                            audio_bytes = audio_data.get_wav_data(convert_rate=self.rate, convert_width=self.p.get_sample_size(self.format))
+                            self.audio = audio_bytes
                             self.__after_recording()
                             break
                         #print("Du hast gesagt: " + text)

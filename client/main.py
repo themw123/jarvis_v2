@@ -1,11 +1,8 @@
-
 import json
-import sys
 import threading
-
 import colorama
 import requests
-import urllib3
+
 
 from assistant.lifecircle import Lifecircle
 
@@ -68,6 +65,8 @@ def main():
         
         for chunk in brain_text:
             print(chunk, end="", flush=True)
+            
+        
 
         #tts_text = tts.tts_wrapper(brain_text=brain_text)
         
