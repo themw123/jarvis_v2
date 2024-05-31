@@ -60,4 +60,4 @@ def endpoint_brain():
     return Response(generate(), content_type='text/plain')
     
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
