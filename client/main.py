@@ -63,12 +63,10 @@ def main():
         
         brain_text = brain.request_backend_brain(stt=stt_text)
         
-        for chunk in brain_text:
-            print(chunk, end="", flush=True)
+        #for chunk in brain_text:
+        #    print(chunk, end="", flush=True)
             
-        
-
-        #tts_text = tts.tts_wrapper(brain_text=brain_text)
+        tts_text = tts.request_backend_tts(brain_text=brain_text)
         
         #player.play_wrapper(tts=tts_text)
         

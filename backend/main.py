@@ -1,13 +1,15 @@
 import io
+import uvicorn
 import json
-from flask import Flask, Response, request
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import StreamingResponse
 import speech_recognition as sr
 
 from assistant.brain import Brain
 from assistant.stt import Stt
 from assistant.tts import Tts
 
-app = Flask(__name__)
+app = FastAPI()
 
 # Globale Variable
 server_config = None
@@ -21,43 +23,45 @@ with open(config_path, 'r') as f:
     server_config = json.load(f)
     
 
-@app.route('/init', methods=['POST'])
-def init():
+
+@app.post('/init')
+async def init(request: Request):
     global stt, brain, tts
     try:
-        client_config = request.json
+        client_config = await request.json()
         
         stt = Stt(server_config, client_config)
         brain = Brain(server_config, client_config)
         tts = Tts(server_config, client_config)
         
-        return "init done", 200
+        return {"message": "init done"}
     except Exception as e:
-        return {"error": "init failed", "details": str(e)}, 500
+        return {"error": "init failed", "details": str(e)}
 
-@app.route('/stt', methods=['POST'])
-def endpoint_stt():
-    audio = request.get_data()
+@app.post('/stt')
+async def endpoint_stt(request: Request):
+    audio = await request.body()
     rate = int(request.headers.get('rate'))
-    sample_width =  int(request.headers.get('sample-width'))
-    #stt.stt_wrapper(audio=audio)
+    sample_width = int(request.headers.get('sample-width'))
+    
     audio_data = sr.AudioData(audio, sample_rate=rate, sample_width=sample_width)
 
-    text = stt.stt_wrapper(audio_data)
-    return text
+    return stt.stt_wrapper(audio_data)
 
-@app.route('/brain', methods=['POST'])
-def endpoint_brain():
-    data = request.get_json()
-    stt = data.get('stt')
+
+@app.post('/brain')
+async def endpoint_brain(request: Request):
+    data = await request.json()
+    stt_text = data.get('stt')
     
-    stream = brain.brain_wrapper(stt)
+    stream = brain.brain_wrapper(stt_text)
     
     def generate():
         for chunk in stream:
             yield chunk
 
-    return Response(generate(), content_type='text/plain')
-    
+    return StreamingResponse(generate(), media_type='text/plain')
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    uvicorn.run(app, host='0.0.0.0', port=5000)
