@@ -9,7 +9,7 @@ class Stt:
         self.config = config
         
     def request_backend_stt(self, audio, rate: int, sample_width: int):
-        url = self.config["backend"]["url"]+'/stt'  
+        url = self.config["backend"]["api"]+'/stt'  
         headers = {'Content-Type': 'application/octet-stream', 'rate': str(rate), 'sample-width': str(sample_width)}
         
         print("- interpret...")

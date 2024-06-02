@@ -35,6 +35,8 @@ def main():
     
     stt = Stt(config)
     tts = Tts(config)
+
+    tts.connect()
     
     init_backend()
 
@@ -63,19 +65,22 @@ def main():
         
         brain_text = brain.request_backend_brain(stt=stt_text)
         
-        #for chunk in brain_text:
-        #    print(chunk, end="", flush=True)
             
         tts_text = tts.request_backend_tts(brain_text=brain_text)
         
-        #player.play_wrapper(tts=tts_text)
+        
+        #for char in tts_text:
+        #    print(char, end="", flush=True)
+        
+        
+        player.play_wrapper(tts=tts_text)
         
         Lifecircle.running = False
 
 
 def init_backend():
     print("\n- init backend...")
-    url = config["backend"]["url"] + '/init'
+    url = config["backend"]["api"] + '/init'
     headers = {'Content-Type': 'application/json'}
     try:
         response = requests.post(url, headers=headers, data=json.dumps(config))

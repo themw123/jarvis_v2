@@ -38,7 +38,7 @@ class Player:
             raise Exception(self.config["tts"]["active"] + ": This tts api type does not exist")  
              
 
-    def __stream_with_google(self, sentences):
+    def __stream_with_google(self, audio_bytes):
         
         #damit die sprechpausen nicht so lang sind höhere buffer size
         buffer_size = 10000
@@ -52,21 +52,16 @@ class Player:
                         frames_per_buffer=buffer_size,
                         )
         
-        counter = 0
-        for sentence in sentences:
-            sentence: gTTS
-            if counter == 0:
-                Player.pause()              
-            for chunk in sentence.stream():
-                if chunk:
-                    if Lifecircle.interruppted:
-                        break
-                    # Convert mp3 data to raw audio data
-                    audio = AudioSegment.from_mp3(io.BytesIO(chunk))
-                    audio = audio.speedup(playback_speed=1.3)
-                    raw_data = audio.raw_data
-                    stream.write(raw_data)
-            counter += 1
+          
+        for chunk in audio_bytes:
+            if Lifecircle.interruppted:
+                break
+            # Convert mp3 data to raw audio data
+            audio_bytes = AudioSegment.from_mp3(io.BytesIO(chunk))
+            audio_bytes = audio_bytes.speedup(playback_speed=1.3)
+            raw_data = audio_bytes.raw_data
+            stream.write(raw_data)
+
             
 
         stream.stop_stream()
@@ -74,7 +69,7 @@ class Player:
         p.terminate()
       
       
-    def __stream_with_xtts(self, sentences):
+    def __stream_with_xtts(self, audio_bytes):
         
         #damit die sprechpausen nicht so lang sind höhere buffer size
         buffer_size = 30000
@@ -88,16 +83,11 @@ class Player:
                         frames_per_buffer=buffer_size,
                         )
         
-        counter = 0
-        for sentence in sentences:   
-            if counter == 0:
-                Player.pause()          
-            for chunk in sentence:
-                if Lifecircle.interruppted:
-                    return
-                # Chunk abspielen
-                stream.write(chunk.cpu().numpy().tobytes())
-            counter += 1
+        for chunk in audio_bytes:            
+            if Lifecircle.interruppted:
+                return
+            # Chunk abspielen
+            stream.write(chunk)
 
         stream.stop_stream()
         stream.close()

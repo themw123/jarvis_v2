@@ -1,13 +1,16 @@
 import io
+from gtts import gTTS
+import pyaudio
 import uvicorn
 import json
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 import speech_recognition as sr
 
 from assistant.brain import Brain
 from assistant.stt import Stt
 from assistant.tts import Tts
+from pydub import AudioSegment
 
 app = FastAPI()
 
@@ -59,9 +62,27 @@ async def endpoint_brain(request: Request):
     def generate():
         for chunk in stream:
             yield chunk
-
+        yield "__END__"  
     return StreamingResponse(generate(), media_type='text/plain')
 
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        try:
+            brain_sentence = await websocket.receive_text()
+            if brain_sentence.strip() == "__END__":
+                await websocket.send_text("__END__")
+            else:
+                sentence_byte = tts.tts_wrapper(brain_sentence)
+                for bytes in sentence_byte:
+                    await websocket.send_bytes(bytes)
+
+
+        except WebSocketDisconnect:
+            print("Client disconnected")
+            break
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=5000)
