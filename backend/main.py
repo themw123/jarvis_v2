@@ -1,4 +1,8 @@
+import asyncio
 import io
+import threading
+import time
+import wave
 from gtts import gTTS
 import pyaudio
 import uvicorn
@@ -66,6 +70,14 @@ async def endpoint_brain(request: Request):
     return StreamingResponse(generate(), media_type='text/plain')
 
 
+@app.get('/tts_piper_read_files')
+async def tts_piper_read_files(request: Request):
+    def generate():
+        for chunk in tts.tts_piper_read_files():
+            yield chunk
+    return StreamingResponse(generate(), media_type="application/octet-stream")
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -74,15 +86,17 @@ async def websocket_endpoint(websocket: WebSocket):
             brain_sentence = await websocket.receive_text()
             if brain_sentence.strip() == "__END__":
                 await websocket.send_text("__END__")
+
             else:
                 sentence_byte = tts.tts_wrapper(brain_sentence)
-                for bytes in sentence_byte:
-                    await websocket.send_bytes(bytes)
+                if tts.client_config["tts"]["active"] != "piper":
+                    for bytes in sentence_byte:
+                        await websocket.send_bytes(bytes)
 
 
         except WebSocketDisconnect:
-            print("Client disconnected")
             break
+        
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=5000)

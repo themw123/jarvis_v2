@@ -36,7 +36,7 @@ def main():
     stt = Stt(config)
     tts = Tts(config)
 
-    tts.connect()
+    #tts.connect()
     
     init_backend()
 

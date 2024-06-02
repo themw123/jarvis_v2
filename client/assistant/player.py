@@ -32,8 +32,7 @@ class Player:
         elif self.config["tts"]["active"] == "xtts":
             self.__stream_with_xtts(tts)
         elif self.config["tts"]["active"] == "piper":
-            #self.__stream_with_piper(tts)
-            return
+            self.__stream_with_piper(tts)
         else:
             raise Exception(self.config["tts"]["active"] + ": This tts api type does not exist")  
              
@@ -94,76 +93,28 @@ class Player:
         p.terminate()
   
 
+    def __stream_with_piper(self, audio_bytes):
         
-    @staticmethod    
-    def stream_from_file(): 
-                        
-        while Player.queing or not Player.audio_queue.empty():
-            
-            if Lifecircle.interruppted:
-                break
-            
-            try:
-                file_path = Player.audio_queue.get(timeout=1)
-            except queue.Empty: 
-                continue
-                
-                                
-            # Load the audio file using wave
-            with wave.open(file_path, 'rb') as audio_file:
-                Player.pause()
-                # Create a PyAudio instance
-                p = pyaudio.PyAudio()
-
-                # Open a stream for playback
-                stream = p.open(format=p.get_format_from_width(audio_file.getsampwidth()),
-                                channels=audio_file.getnchannels(),
-                                rate=audio_file.getframerate(),
-                                output=True)
-                # Read audio data in chunks and write to the stream
-                data = audio_file.readframes(1024)
-                while data:
-                    if Lifecircle.interruppted:
-                        break
-                    stream.write(data)
-                    data = audio_file.readframes(1024)
-
-                Player.audio_queue.task_done()   
-                # Stop and close the stream
-                stream.stop_stream()
-                stream.close()
-                # Terminate the PyAudio instance
-                p.terminate()
-            
-            
-            
-   
-    def __stream_with_piper(self, sentences):
- 
-        ##not working. #TODO
-        
+        #damit die sprechpausen nicht so lang sind höhere buffer size
 
         p = pyaudio.PyAudio()
 
-        stream = p.open(format=pyaudio.paInt16,
+        stream = p.open(format=8,
                         channels=1,
                         rate=22050,
-                        output=True,
-                        )
+                        output=True)
         
-        counter = 0
-        for sentence in sentences:   
-            if counter == 0:
-                Player.pause()          
-            for chunk in sentence:
-                if Lifecircle.interruppted:
-                    break
-                stream.write(chunk)
-            counter += 1
+        for chunk in audio_bytes:            
+            if Lifecircle.interruppted:
+                return
+            # Chunk abspielen
+            stream.write(chunk)
 
         stream.stop_stream()
         stream.close()
-        p.terminate()               
+        p.terminate()            
+            
+                    
             
               
             
