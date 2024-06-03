@@ -6,21 +6,13 @@ with contextlib.redirect_stdout(None):
     from pygame import mixer
     
 import io
-import queue
-import wave
 import pyaudio
-
 from pygame import mixer
 from pydub import AudioSegment
-from gtts import gTTS
 
 
 
 class Player:
-    
-    audio_queue = queue.Queue()
-    queing = False
-
 
     def __init__(self, config):
         self.config = config
@@ -53,7 +45,7 @@ class Player:
         
           
         for chunk in audio_bytes:
-            if Lifecircle.interruppted:
+            if Lifecircle.interrupted:
                 break
             # Convert mp3 data to raw audio data
             audio_bytes = AudioSegment.from_mp3(io.BytesIO(chunk))
@@ -83,7 +75,7 @@ class Player:
                         )
         
         for chunk in audio_bytes:            
-            if Lifecircle.interruppted:
+            if Lifecircle.interrupted:
                 return
             # Chunk abspielen
             stream.write(chunk)
@@ -105,7 +97,7 @@ class Player:
                         output=True)
         
         for chunk in audio_bytes:            
-            if Lifecircle.interruppted:
+            if Lifecircle.interrupted:
                 return
             # Chunk abspielen
             stream.write(chunk)
@@ -114,23 +106,6 @@ class Player:
         stream.close()
         p.terminate()            
             
-                    
-            
-              
-            
-    @staticmethod
-    def kill_queue():
-        Player.queing = False
-        # Attempt to clear the queue immediately to prevent any further processing
-        while not Player.audio_queue.empty():
-            try:
-                # Try to get an item from the queue without waiting
-                Player.audio_queue.get_nowait()
-            except queue.Empty:
-                # If the queue is empty, continue to the next iteration
-                continue
-            # Mark the task as done in the queue
-            Player.audio_queue.task_done()
         
 
     @staticmethod

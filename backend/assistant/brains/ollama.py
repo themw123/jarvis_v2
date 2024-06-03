@@ -33,7 +33,7 @@ class Ollama:
             count = 0
             full_response = ""
             for chunk in stream:
-                if Lifecircle.interruppted:
+                if Lifecircle.interrupted:
                     break
                 if chunk['message']['content'] is not None:
                     if count == 0:

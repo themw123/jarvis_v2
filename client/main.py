@@ -40,12 +40,13 @@ def main():
     
     init_backend()
 
-    Lifecircle.listen_to_interupt_keyboard(config)
+    listen_keyboard_interupt = threading.Thread(target=Lifecircle.listen_to_interupt_keyboard, args=(recorder, config))
+    listen_keyboard_interupt.start()
     #for voice interrupting with stopword. Only works with headphones on
-    t = threading.Thread(target=Lifecircle.listen_to_interupt_voice, args=(recorder,))
-    t.start()
+    listen_voice_interupt = threading.Thread(target=Lifecircle.listen_to_interupt_voice, args=(recorder, config))
+    listen_voice_interupt.start()
 
-    listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard, args=(config,))
+    listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard)
     listen_keyboard.start()
     
     listen_voice = threading.Thread(target=recorder.listen_on_voice, args=("default",))
@@ -58,6 +59,7 @@ def main():
         recorder.event.wait()    
          
         audio = recorder.audio
+    
         
         stt_text = stt.request_backend_stt(audio=audio, rate=recorder.rate, sample_width=recorder.p.get_sample_size(recorder.format))
         print_user(stt_text)

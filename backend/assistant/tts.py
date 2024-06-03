@@ -53,14 +53,7 @@ class Tts:
         elif self.client_config["tts"]["active"] == "xtts":
             return self.__tts_xtts(brain_text)
         elif self.client_config["tts"]["active"] == "piper":
-            #self.piper_text_queue.put(brain_text)
             return self.__tts_piper_gen(brain_text)
-            
-      
-            
-            
-            #...
-            #return self.__tts_piper_read_files()
         else:
             raise Exception(self.client_config["tts"]["active"] + ": This tts api type does not exist")  
 
@@ -69,6 +62,8 @@ class Tts:
     def __tts_google(self, brain_text):
         stream = gTTS(text=brain_text, lang=self.server_config["tts"]["google"]["language"], slow=False).stream()
         for bytes in stream:
+            if Lifecircle.interrupted:
+                break
             yield bytes
         
         
@@ -86,6 +81,8 @@ class Tts:
         )
 
         for bytes in stream:
+            if Lifecircle.interrupted:
+                break
             bytes = bytes.cpu().numpy().tobytes()
             yield bytes
             
@@ -109,6 +106,9 @@ class Tts:
         #piper-tts on windowws with pip not installable. Using subprocess instead
         #does not support streaming. Therefore, the audio is saved in a temporary file and played afterwards.
 
+        if Lifecircle.interrupted:
+            return
+    
         output_file = tempfile.NamedTemporaryFile(delete=False, dir="./temp_audio", suffix=".wav")
         
         # Construct and execute the Piper TTS command
@@ -126,9 +126,8 @@ class Tts:
             # Read audio data in chunks and write to the stream
             data = audio_file.readframes(1024)
             while data:
-                #if Lifecircle.interruppted:
-                #    break
-                #stream.write(data)
+                if Lifecircle.interrupted:
+                    break
                 yield data
                 data = audio_file.readframes(1024)        
 

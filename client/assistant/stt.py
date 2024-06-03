@@ -1,7 +1,4 @@
-import io
-import json
 import requests
-from speech_recognition import AudioData
 
 
 class Stt:

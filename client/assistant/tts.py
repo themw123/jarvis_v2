@@ -1,6 +1,4 @@
 import threading
-import time
-import requests
 from websocket import create_connection
 
 class Tts:

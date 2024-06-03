@@ -24,6 +24,7 @@ class Recorder:
         self.event = threading.Event()
 
         self.ctrl_pressed = False
+        self.x_pressed = False
         self.space_pressed = False
         
         self.recording = False
@@ -40,17 +41,15 @@ class Recorder:
                         input=True,
                         frames_per_buffer=self.chunk)
     
-    def __before_recording(self):
-        Lifecircle.do_interrupt()
         
     def __after_recording(self):
         Lifecircle.running = True
-        Lifecircle.interruppted = False
+        Lifecircle.interrupted = False
         Player.play_record_end()
         self.event.set()
 
 
-    def on_press(self, key):
+    def __on_press_ctrl_space(self, key):
         try:
             if key == keyboard.Key.ctrl_l:
                 self.ctrl_pressed = True
@@ -69,7 +68,7 @@ class Recorder:
             pass
 
             
-    def on_release(self, key):
+    def __on_release_ctrl_space(self, key):
         try:
             if key == keyboard.Key.ctrl_l:
                 self.ctrl_pressed = False
@@ -77,13 +76,42 @@ class Recorder:
                 self.space_pressed = False
         except AttributeError:
             pass
+        
+           
+        
+        
+    def __on_press_ctrl_x(self, key):
+        try:
+            #if key == keyboard.HotKey.parse('<ctrl>+x'):
+            if key == keyboard.Key.shift_l:
+                self.x_pressed = True
 
+        except AttributeError:
+            pass
 
-    def listen_on_keyboard(self, config):   
+            
+    def __on_release_ctrl_x(self, key):
+        try:
+            if key == keyboard.Key.ctrl_l:
+                self.x_pressed = False
+                return False
+        except AttributeError:
+            pass
+        
+        
+    def listen_on_keyboard_interrupt(self):
+        listener = keyboard.Listener(
+            on_press=self.__on_press_ctrl_x,
+            on_release=self.__on_release_ctrl_x)
+        listener.start()
+        listener.join()  
+               
+
+    def listen_on_keyboard(self):   
         
         listener = keyboard.Listener(
-            on_press=self.on_press,
-            on_release=self.on_release)
+            on_press=self.__on_press_ctrl_space,
+            on_release=self.__on_release_ctrl_space)
         listener.start()
              
         while True:
@@ -98,7 +126,6 @@ class Recorder:
                      
             self.frames = []
     
-            self.__before_recording()
             Player.play_record_start()
             print("- listen...")
             
@@ -139,7 +166,6 @@ class Recorder:
                     try:
                         text = recognizerStartword.recognize_google(audio_data, language="de-DE")
                         if startword.lower() in text.lower():
-                            self.__before_recording()
                             if mode == "interrupt":
                                 break
                             Player.play_record_start()

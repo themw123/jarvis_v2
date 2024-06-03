@@ -1,25 +1,29 @@
-
-
+import requests
 
 
 class Lifecircle:
     running = False
-    interruppted = False        
+    interrupted = False        
         
     @staticmethod    
-    def listen_to_interupt_keyboard(config):
-        #keyboard.add_hotkey(config["recorder"]["stopkey"], Lifecircle.do_interrupt)  
-        pass
+    def listen_to_interupt_keyboard(recorder, config):
+        while True:
+            recorder.listen_on_keyboard_interrupt()
+            Lifecircle.do_interrupt(config)
+          
     @staticmethod    
-    def listen_to_interupt_voice(recorder):
+    def listen_to_interupt_voice(recorder, config):
         while True:
             recorder.listen_on_voice("interrupt")
-            print("\n\nstoppe")
-            Lifecircle.do_interrupt()
+            Lifecircle.do_interrupt(config)
     
     @staticmethod
-    def do_interrupt():
-        Lifecircle.interruppted = True
+    def do_interrupt(config):
         from assistant.player import Player
-        Player.kill_queue()
+        Lifecircle.interrupted = True
         Player.pause()
+        url = config["backend"]["api"]+'/interrupt'
+        headers = {'Content-Type': 'plain/text'}
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200:
+            print("\n- interrupting failed")

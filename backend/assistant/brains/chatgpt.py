@@ -3,8 +3,6 @@ import json
 import colorama
 from openai import OpenAI
 
-from assistant.lifecircle import Lifecircle
-
 
 class Chatgpt:
 
@@ -36,7 +34,7 @@ class Chatgpt:
             count = 0
             full_response = ""
             for chunk in stream:
-                if Lifecircle.interruppted:
+                if Lifecircle.interrupted:
                     break
                 if chunk.choices[0].delta.content is not None:
                     if count == 0:

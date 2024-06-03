@@ -4,6 +4,8 @@ from faster_whisper import WhisperModel
 from openai import OpenAI
 import speech_recognition as sr
 from speech_recognition import AudioData, Recognizer
+
+from assistant.lifecircle import Lifecircle
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 class Stt:
@@ -57,6 +59,8 @@ class Stt:
                     beam_size=5
                 )
                 for segment in segments:
+                    if Lifecircle.interrupted:
+                        break
                     text += segment.text + " "
                 return text.strip()
                 
@@ -88,7 +92,8 @@ class Stt:
                     file = audio_file,
                     model = "whisper-1",
                     response_format="text",
-                    language=self.server_config["stt"]["whisper"]["language"]
+                    language=self.server_config["stt"]["whisper"]["language"],
+                    
                 )
             return text
         except IOError as file_error:
