@@ -83,18 +83,19 @@ class Recorder:
     def __on_press_ctrl_x(self, key):
         try:
             #if key == keyboard.HotKey.parse('<ctrl>+x'):
-            if key == keyboard.Key.shift_l:
-                self.x_pressed = True
-
+            #if key == keyboard.Key.shift_l:
+            #    self.x_pressed = True
+            pass
         except AttributeError:
             pass
 
             
     def __on_release_ctrl_x(self, key):
         try:
-            if key == keyboard.Key.ctrl_l:
-                self.x_pressed = False
-                return False
+            #if key == keyboard.Key.ctrl_l:
+            #    self.x_pressed = False
+            #    return False
+            pass
         except AttributeError:
             pass
         

@@ -52,6 +52,7 @@ async def initerrupt():
 @app.post('/stt')
 async def endpoint_stt(request: Request):
     try:
+        Lifecircle.interrupted = False
         audio = await request.body()
         rate = int(request.headers.get('rate'))
         sample_width = int(request.headers.get('sample-width'))
