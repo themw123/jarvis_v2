@@ -47,12 +47,12 @@ class Tts:
         self.connect()
         thread = threading.Thread(target=self.send, args=(brain_text,))
         thread.start()
-        if self.config["tts"]["active"] != "piper":
-            for chunk in self.receive():
-                yield chunk
-        else:
-            for chunk in self.piper_read_files():
-                yield chunk
+        #if self.config["tts"]["active"] != "piper":
+        for chunk in self.receive():
+            yield chunk
+        #else:
+        #    for chunk in self.piper_read_files():
+        #        yield chunk
         thread.join()
         
         

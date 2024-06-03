@@ -4,11 +4,9 @@ import platform
 import queue
 import subprocess
 import tempfile
-import threading
-import time
+
 import wave
 from gtts import gTTS
-import pyaudio
 from assistant.lifecircle import Lifecircle
 
 from TTS.tts.configs.xtts_config import XttsConfig
@@ -111,11 +109,6 @@ class Tts:
         #piper-tts on windowws with pip not installable. Using subprocess instead
         #does not support streaming. Therefore, the audio is saved in a temporary file and played afterwards.
 
-        #for chunk in brain_text:
-            
-        #if Lifecircle.interruppted:
-        #    break
-
         output_file = tempfile.NamedTemporaryFile(delete=False, dir="./temp_audio", suffix=".wav")
         
         # Construct and execute the Piper TTS command
@@ -128,46 +121,17 @@ class Tts:
         self.process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         self.process.communicate(brain_text.encode())
         self.process.wait()
-        self.piper_file_queue.put(output_file.name)
-        self.piper_queueing = True
-        
-                
 
-    def tts_piper_read_files(self):
-        x = True
-        while x:
-            while not self.piper_file_queue.empty():
-                x = False
-                if Lifecircle.interruppted:
-                    break
-                
-                # Load the audio file using wave
-                with wave.open(self.piper_file_queue.get(), 'rb') as audio_file:
-                    #Player.pause()
-                    # Create a PyAudio instance
-                    p = pyaudio.PyAudio()
+        with wave.open(output_file.name, 'rb') as audio_file:
+            # Read audio data in chunks and write to the stream
+            data = audio_file.readframes(1024)
+            while data:
+                #if Lifecircle.interruppted:
+                #    break
+                #stream.write(data)
+                yield data
+                data = audio_file.readframes(1024)        
 
-                    # Open a stream for playback
-                    stream = p.open(format=p.get_format_from_width(audio_file.getsampwidth()),
-                                    channels=audio_file.getnchannels(),
-                                    rate=audio_file.getframerate(),
-                                    output=True)
-                    # Read audio data in chunks and write to the stream
-                    data = audio_file.readframes(1024)
-                    while data:
-                        #if Lifecircle.interruppted:
-                        #    break
-                        #stream.write(data)
-                        yield data
-                        data = audio_file.readframes(1024)
-
-                    # Stop and close the stream
-                    stream.stop_stream()
-                    stream.close()
-                    # Terminate the PyAudio instance
-                    p.terminate()                  
-
-            time.sleep(0.1)
        
        
     def __tts_piper_stream(self, brain_text):

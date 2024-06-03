@@ -1,10 +1,4 @@
-import asyncio
-import io
-import threading
-import time
-import wave
-from gtts import gTTS
-import pyaudio
+
 import uvicorn
 import json
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
@@ -14,7 +8,6 @@ import speech_recognition as sr
 from assistant.brain import Brain
 from assistant.stt import Stt
 from assistant.tts import Tts
-from pydub import AudioSegment
 
 app = FastAPI()
 
@@ -89,9 +82,8 @@ async def websocket_endpoint(websocket: WebSocket):
 
             else:
                 sentence_byte = tts.tts_wrapper(brain_sentence)
-                if tts.client_config["tts"]["active"] != "piper":
-                    for bytes in sentence_byte:
-                        await websocket.send_bytes(bytes)
+                for bytes in sentence_byte:
+                    await websocket.send_bytes(bytes)
 
 
         except WebSocketDisconnect:
@@ -99,4 +91,4 @@ async def websocket_endpoint(websocket: WebSocket):
         
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=5000)
+    uvicorn.run(app, host='0.0.0.0', port=8000)
