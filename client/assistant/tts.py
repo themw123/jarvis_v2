@@ -30,18 +30,6 @@ class Tts:
                     break
             yield message
         
-        
-    def piper_read_files(self):
-        url = self.config["backend"]["api"]+'/tts_piper_read_files'
-        headers = {'Content-Type': 'application/octet-stream'}
-        response = requests.get(url, headers=headers, stream=True)
-        if response.status_code != 200:
-            raise SystemExit("- Piper read files failed")
-        for tts_bytes in response.iter_content(1024):
-            yield tts_bytes
-            #print(tts_bytes)         
-        
-        
 
     def request_backend_tts(self, brain_text):
         self.connect()

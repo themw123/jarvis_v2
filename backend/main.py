@@ -63,14 +63,6 @@ async def endpoint_brain(request: Request):
     return StreamingResponse(generate(), media_type='text/plain')
 
 
-@app.get('/tts_piper_read_files')
-async def tts_piper_read_files(request: Request):
-    def generate():
-        for chunk in tts.tts_piper_read_files():
-            yield chunk
-    return StreamingResponse(generate(), media_type="application/octet-stream")
-
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
