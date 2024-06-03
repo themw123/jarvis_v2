@@ -8,7 +8,7 @@ class Brain:
     def __init__(self, server_config, client_config):
         self.server_config = server_config
         self.client_config = client_config
-        self.messages = [ {"role": "system", "content": self.server_config["chat"]["role"]} ]
+        self.messages = [ {"role": "system", "content": self.client_config["chat"]["role"]} ]
         self.ollama = Ollama(server_config, client_config, self.messages)
         self.groq = GroqClass(server_config, self.messages)
         self.chatgpt = Chatgpt(server_config, self.messages)

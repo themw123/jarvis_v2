@@ -59,3 +59,8 @@ class Ollama:
 
     def __wakeup_ollama(self):
         print("\n- waking up ollama")
+        self.client.chat(
+            model=self.server_config["brain"]["ollama"]["model"],
+            messages=[{"role": "user", "content": "say \"test\""}],
+            keep_alive=self.server_config["brain"]["ollama"]["keep_alive"],
+        )
