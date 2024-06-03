@@ -23,6 +23,12 @@ class Stt:
                 device=device,
                 compute_type=compute_type
             )
+            
+            # Load the model into memory
+            self.model.transcribe(
+                audio="backend/wakeup.wav",
+                beam_size=5
+            )
     
 
 
@@ -116,4 +122,5 @@ class Stt:
             print("- Sprache konnte nicht erkannt werden.\n")
         except sr.RequestError:
             print("- Fehler beim Abrufen der Spracherkennung.\n")
+
     

@@ -42,9 +42,9 @@ class Tts:
             self.__tts_piper_init()
         
                 
-        files = os.listdir("temp_audio")
+        files = os.listdir("backend/temp_audio")
         for file in files:
-            os.remove(os.path.join("temp_audio", file))     
+            os.remove(os.path.join("backend/temp_audio", file))     
                         
     def tts_wrapper(self, brain_text):
         
@@ -109,7 +109,7 @@ class Tts:
         if Lifecircle.interrupted:
             return
     
-        output_file = tempfile.NamedTemporaryFile(delete=False, dir="./temp_audio", suffix=".wav")
+        output_file = tempfile.NamedTemporaryFile(delete=False, dir="backend/temp_audio", suffix=".wav")
         
         # Construct and execute the Piper TTS command
         command = [
