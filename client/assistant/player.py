@@ -76,7 +76,7 @@ class Player:
         
         for chunk in audio_bytes:            
             if Lifecircle.interrupted:
-                return
+                break
             # Chunk abspielen
             stream.write(chunk)
 
@@ -98,7 +98,7 @@ class Player:
         
         for chunk in audio_bytes:            
             if Lifecircle.interrupted:
-                return
+                break
             # Chunk abspielen
             stream.write(chunk)
 

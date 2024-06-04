@@ -49,53 +49,56 @@ class Recorder:
         self.event.set()
 
 
+
     def __on_press_ctrl_space(self, key):
         try:
             if key == keyboard.Key.ctrl_l:
                 self.ctrl_pressed = True
             elif key == keyboard.Key.space:
                 self.space_pressed = True
-
-            if self.ctrl_pressed and self.space_pressed:
-                self.ctrl_pressed = False
-                self.space_pressed = False
-                if self.recording:
-                    self.recording = False
-                else:
-                    self.recording = True
-
         except AttributeError:
             pass
-
-            
+    
     def __on_release_ctrl_space(self, key):
         try:
             if key == keyboard.Key.ctrl_l:
                 self.ctrl_pressed = False
+                if self.space_pressed:
+                    self.space_pressed = False
+                    self.recording = not self.recording
+                    return False
             elif key == keyboard.Key.space:
                 self.space_pressed = False
+                if self.ctrl_pressed:
+                    self.ctrl_pressed = False
+                    self.recording = not self.recording
+                    return False
         except AttributeError:
             pass
-        
-           
         
         
     def __on_press_ctrl_x(self, key):
         try:
-            #if key == keyboard.HotKey.parse('<ctrl>+x'):
-            #if key == keyboard.Key.shift_l:
-            #    self.x_pressed = True
-            pass
+            if key == keyboard.Key.ctrl_l:
+                self.ctrl_pressed = True
+            elif key == keyboard.Key.shift_l:
+                self.x_pressed = True
         except AttributeError:
             pass
 
             
     def __on_release_ctrl_x(self, key):
         try:
-            #if key == keyboard.Key.ctrl_l:
-            #    self.x_pressed = False
-            #    return False
-            pass
+            if key == keyboard.Key.ctrl_l:
+                self.ctrl_pressed = False
+                if self.x_pressed:
+                    self.x_pressed = False
+                    return False
+            elif key == keyboard.Key.shift:
+                self.x_pressed = False
+                if self.ctrl_pressed:
+                    self.ctrl_pressed = False
+                    return False
         except AttributeError:
             pass
         
@@ -108,43 +111,34 @@ class Recorder:
         listener.join()  
                
 
-    def listen_on_keyboard(self):   
-        
-        listener = keyboard.Listener(
-            on_press=self.__on_press_ctrl_space,
-            on_release=self.__on_release_ctrl_space)
-        listener.start()
-             
+    def listen_on_keyboard(self):         
         while True:
+            
+            listener1 = keyboard.Listener(
+                on_press=self.__on_press_ctrl_space, on_release=self.__on_release_ctrl_space)
+
+            listener2 = keyboard.Listener(
+                on_press=self.__on_press_ctrl_space, on_release=self.__on_release_ctrl_space)
+            
             while Lifecircle.running:
                 time.sleep(0.1)
               
-            #keyboard.wait is buggy  
-            #keyboard.wait('ctrl+space', suppress=True, trigger_on_release=True)
-
-            while not self.recording:
-                time.sleep(0.1)
-                     
+            listener1.start()
+            listener1.join()    
+            listener2.start()
+                    
             self.frames = []
-    
             Player.play_record_start()
-            print("- listen...")
-            
-            #while not keyboard.is_pressed(config["recorder"]["startkey"]):
-                # Record data audio data
-            #    data = self.stream.read(self.chunk)
-                # Add the data to a buffer (a list of chunks)
-            #    self.frames.append(data)
+            print("- listen...\n")
             
             while self.recording:    
                 data = self.stream.read(self.chunk)
                 self.frames.append(data)   
     
-            
             audio_data = b''.join(self.frames)
-            #self.audio = sr.AudioData(audio_data, sample_rate=self.rate, sample_width=self.p.get_sample_size(self.format))
             self.audio = audio_data
             self.__after_recording()
+            listener2.join()
 
     def listen_on_voice(self, mode):
         recognizerStartword = sr.Recognizer()
@@ -170,7 +164,7 @@ class Recorder:
                             if mode == "interrupt":
                                 break
                             Player.play_record_start()
-                            print("- listen...")
+                            print("\n- listen...\n")
                             audio_data = recognizerSpokenText.listen(source)
                             audio_bytes = audio_data.get_wav_data(convert_rate=self.rate, convert_width=self.p.get_sample_size(self.format))
                             self.audio = audio_bytes

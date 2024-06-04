@@ -1,4 +1,5 @@
 
+import asyncio
 import uvicorn
 import json
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
@@ -85,9 +86,9 @@ async def websocket_endpoint(websocket: WebSocket):
     while True:
         try:
             brain_sentence = await websocket.receive_text()
+            
             if brain_sentence.strip() == "__END__":
-                await websocket.send_text("__END__")
-
+                await websocket.send_text("__END__")    
             else:
                 sentence_byte = tts.tts_wrapper(brain_sentence)
                 for bytes in sentence_byte:

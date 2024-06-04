@@ -1,4 +1,5 @@
 import threading
+import time
 from websocket import create_connection
 
 class Tts:
@@ -6,11 +7,12 @@ class Tts:
     def __init__(self, config):
         self.config = config
         self.websocket = None
-        self.ping_interval = 10
+        
         
     def connect(self):
         self.websocket = create_connection(self.config["backend"]["websocket"])
-     
+        
+            
         
     def send(self, brain_text):
         for chunk in brain_text:
@@ -18,7 +20,6 @@ class Tts:
                 self.websocket.send("__END__")
                 break
             self.websocket.send(chunk)
-            #print(chunk)
         
     def receive(self):
         while True:
@@ -35,7 +36,6 @@ class Tts:
         thread.start()
         for chunk in self.receive():
             yield chunk
-        thread.join()
-        
+        thread.join()        
         
     
