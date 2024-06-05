@@ -170,13 +170,10 @@ class Recorder:
                             self.audio = audio_bytes
                             self.__after_recording()
                             break
-                        #print("Du hast gesagt: " + text)
                         pass
                     except sr.UnknownValueError:
-                        #print("Google Web Speech API konnte das Audio nicht verstehen")
                         pass
                     except sr.RequestError as e:
-                        #print("Konnte keine Anfrage an den Google Web Speech API stellen; {0}".format(e))
                         pass
                     
         

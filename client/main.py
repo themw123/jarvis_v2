@@ -36,7 +36,6 @@ def main():
     stt = Stt(config)
     tts = Tts(config)
 
-    #tts.connect()
     init_backend()
 
     listen_keyboard_interupt = threading.Thread(target=Lifecircle.listen_to_interupt_keyboard, args=(recorder, config))
@@ -53,6 +52,7 @@ def main():
     
     Player.play_initial()
     while True:
+        print("\n- waiting for you...")
         recorder.event.clear()
         recorder.event.wait()    
          

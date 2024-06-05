@@ -31,7 +31,6 @@ class Player:
 
     def __stream_with_google(self, audio_bytes):
         
-        #damit die sprechpausen nicht so lang sind höhere buffer size
         buffer_size = 10000
 
         p = pyaudio.PyAudio()
@@ -62,8 +61,7 @@ class Player:
       
     def __stream_with_xtts(self, audio_bytes):
         
-        #damit die sprechpausen nicht so lang sind höhere buffer size
-        buffer_size = 30000
+        buffer_size = 10000
 
         p = pyaudio.PyAudio()
 
@@ -77,7 +75,6 @@ class Player:
         for chunk in audio_bytes:            
             if Lifecircle.interrupted:
                 break
-            # Chunk abspielen
             stream.write(chunk)
 
         stream.stop_stream()
@@ -87,8 +84,6 @@ class Player:
 
     def __stream_with_piper(self, audio_bytes):
         
-        #damit die sprechpausen nicht so lang sind höhere buffer size
-
         p = pyaudio.PyAudio()
 
         stream = p.open(format=8,
@@ -99,7 +94,6 @@ class Player:
         for chunk in audio_bytes:            
             if Lifecircle.interrupted:
                 break
-            # Chunk abspielen
             stream.write(chunk)
 
         stream.stop_stream()
