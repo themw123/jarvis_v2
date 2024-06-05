@@ -3,6 +3,8 @@ import json
 import colorama
 from openai import OpenAI
 
+from assistant.lifecircle import Lifecircle
+
 
 class Chatgpt:
 
@@ -31,27 +33,18 @@ class Chatgpt:
                 stream=True,
             )
             
-            count = 0
             full_response = ""
             for chunk in stream:
                 if Lifecircle.interrupted:
                     break
                 if chunk.choices[0].delta.content is not None:
-                    if count == 0:
-                        #warte sound abspielen
-                        #Player.play_wait()
-                        pass
                     content = chunk.choices[0].delta.content
                     full_response += content
-                    #print(content, end="", flush=True)
                     yield content
-                    count += 1
             self.messages.append({'role': 'system', 'content': full_response})
             print()
             self.__reset__colorama()
 
-        except KeyboardInterrupt:
-            raise KeyboardInterrupt
         except Exception as e:
             raise Exception("ChatGPT: API, failed")
               

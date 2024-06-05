@@ -30,29 +30,20 @@ class Ollama:
                 keep_alive=self.server_config["brain"]["ollama"]["keep_alive"],
             )
             
-            count = 0
             full_response = ""
             for chunk in stream:
                 if Lifecircle.interrupted:
                     break
                 if chunk['message']['content'] is not None:
-                    if count == 0:
-                        #warte sound abspielen
-                        #Player.play_wait()
-                        pass
                     content = chunk['message']['content']
                     full_response += content
-                    #print(content, end="", flush=True)
                     yield content
-                    count += 1             
             self.messages.append({'role': 'system', 'content': full_response})
             print()
             self.__reset__colorama()
 
-        except KeyboardInterrupt:
-            raise KeyboardInterrupt
         except Exception as e:
-            raise Exception("Ollama: API, failed")
+            raise Exception(e)
 
     def __reset__colorama(self):
         print(colorama.Style.RESET_ALL)

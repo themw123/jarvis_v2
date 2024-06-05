@@ -41,11 +41,13 @@ class Tts:
         elif self.client_config["tts"]["active"] == "piper":
             self.__tts_piper_init()
         
-                
-        files = os.listdir("backend/temp_audio")
-        for file in files:
-            os.remove(os.path.join("backend/temp_audio", file))     
-                        
+        try:
+            files = os.listdir("backend/temp_audio")
+            for file in files:
+                os.remove(os.path.join("backend/temp_audio", file))     
+        except Exception as e:
+            raise Exception(e)
+            
     def tts_wrapper(self, brain_text):
         
         if self.client_config["tts"]["active"] == "google":
@@ -123,7 +125,6 @@ class Tts:
         self.process.wait()
 
         with wave.open(output_file.name, 'rb') as audio_file:
-            # Read audio data in chunks and write to the stream
             data = audio_file.readframes(1024)
             while data:
                 if Lifecircle.interrupted:
@@ -166,7 +167,6 @@ class Tts:
                 if not data:
                     break
                 yield data
-                #print(data)
  
        
         
@@ -181,6 +181,6 @@ class Tts:
                 gpt_cond_latent = pickle.load(f)
             return speaker_embedding, gpt_cond_latent
         except:
-            raise Exception("Datei wurde nicht gefunden oder konnte nicht geladen werden.")  
+            raise Exception("File was not found or could not be loaded")  
         
         

@@ -51,11 +51,10 @@ class Stt:
     def __stt_whisper_local(self, audio: AudioData):
 
         try:
-            # Erstelle eine temporäre Datei und schreibe den Inhalt des Audio-Streams hinein
             with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_file:
                 temp_file.write(audio.get_wav_data())
         except Exception as e:
-            raise Exception("Temporäre Datei konnte nicht erstellt werden")
+            raise Exception(e)
 
         try:
             with open(temp_file.name, "rb") as audio_file:
@@ -70,12 +69,10 @@ class Stt:
                     text += segment.text + " "
                 return text.strip()
                 
-        except IOError as file_error:
-            # Exception for file reading errors (e.g., file not found, permissions issue)
-            raise Exception("Fehler beim lesen der Temp File:", file_error)
-        except Exception as api_error:
-            # Exception for API request errors (e.g., network issues, invalid API response)
-            raise Exception("Fehler bei der Whisper local:", api_error)
+        except IOError as e:
+            raise Exception(e)
+        except Exception as e:
+            raise Exception(e)
         finally:
             temp_file.close()
             os.remove(temp_file.name)  
@@ -87,7 +84,7 @@ class Stt:
             with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_file:
                 temp_file.write(audio.get_wav_data())
         except Exception as e:
-            raise Exception("Temporäre Datei konnte nicht erstellt werden")
+            raise Exception(e)
 
         try:
             with open(temp_file.name, "rb") as audio_file:
@@ -102,12 +99,10 @@ class Stt:
                     
                 )
             return text
-        except IOError as file_error:
-            # Exception for file reading errors (e.g., file not found, permissions issue)
-            raise Exception("Fehler beim lesen der Temp File:", file_error)
-        except Exception as api_error:
-            # Exception for API request errors (e.g., network issues, invalid API response)
-            raise Exception("Fehler bei der Whisper API:", api_error)
+        except IOError as e:
+            raise Exception(e)
+        except Exception as e:
+            raise Exception(e)
         finally:
             temp_file.close()
             os.remove(temp_file.name)    
@@ -117,10 +112,15 @@ class Stt:
     def __stt_google(self, r: Recognizer, audio: AudioData):
         try:
             #nur google ist ohne api key.
-            return r.recognize_google(audio, language=self.server_config["stt"]["google"]["language"])
+            result = r.recognize_google(audio, language=self.server_config["stt"]["google"]["language"])
+            if result is not None:
+                return result
+            else:
+                return "" 
+
         except sr.UnknownValueError:
-            print("- Sprache konnte nicht erkannt werden.\n")
+            return ""
         except sr.RequestError:
-            print("- Fehler beim Abrufen der Spracherkennung.\n")
+            return ""
 
     
