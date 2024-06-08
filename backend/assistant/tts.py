@@ -173,7 +173,7 @@ class Tts:
                  
                  
     def __xtts_load_voice(self):
-        filename = self.server_config["tts"]["xtts"]["voice"]
+        filename = self.client_config["tts"]["xtts_voice"]
         try:
             with open(self.server_config["tts"]["xtts"]["location"]+"/voices/" + filename + '_embedding.pkl', 'rb') as f:
                 speaker_embedding = pickle.load(f)
