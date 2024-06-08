@@ -24,7 +24,7 @@ class Ollama:
                 {"role": "user", "content": stt},
             )
             stream = self.client.chat(
-                model=self.server_config["brain"]["ollama"]["model"],
+                model=self.client_config["brain"]["ollama_model"],
                 messages=self.messages,
                 stream=True,
                 keep_alive=self.server_config["brain"]["ollama"]["keep_alive"],
@@ -49,9 +49,9 @@ class Ollama:
         print(colorama.Style.RESET_ALL)
 
     def __wakeup_ollama(self):
-        print("\n- waking up ollama")
+        print("\n- starting ollama model")
         self.client.chat(
-            model=self.server_config["brain"]["ollama"]["model"],
+            model=self.client_config["brain"]["ollama_model"],
             messages=[{"role": "user", "content": "say \"test\""}],
             keep_alive=self.server_config["brain"]["ollama"]["keep_alive"],
         )

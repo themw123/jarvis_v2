@@ -8,8 +8,9 @@ from assistant.lifecircle import Lifecircle
 
 class Chatgpt:
 
-    def __init__(self, server_config, self_messages: list):
+    def __init__(self, server_config, client_config, self_messages: list):
         self.server_config = server_config
+        self.client_config = client_config
         self.messages = self_messages
             
     def ask_wrapper(self, stt):
@@ -28,7 +29,7 @@ class Chatgpt:
             )
                         
             stream = client.chat.completions.create(
-                model="gpt-4o",
+                model=self.client_config["brain"]["openai_model"],
                 messages=self.messages,
                 stream=True,
             )

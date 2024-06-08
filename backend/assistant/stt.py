@@ -23,12 +23,12 @@ class Stt:
                 device=device,
                 compute_type=compute_type
             )
-            
-            # Load the model into memory
-            self.model.transcribe(
+            # wake up the model
+            for segment in self.model.transcribe(
                 audio="backend/wakeup.wav",
                 beam_size=5
-            )
+            ):
+                pass
     
 
 

@@ -6,8 +6,9 @@ from assistant.lifecircle import Lifecircle
 
 class GroqClass:
 
-    def __init__(self, server_config, messages: list):
+    def __init__(self, server_config, client_config, messages: list):
         self.server_config = server_config
+        self.client_config = client_config
         self.messages = messages
         self.client = Groq(api_key=self.server_config["brain"]["groq"]["api_key"])
 
@@ -21,7 +22,7 @@ class GroqClass:
             )
             
             stream = self.client.chat.completions.create(
-                model=self.server_config["brain"]["groq"]["model"],
+                model=self.client_config["brain"]["groq_model"],
                 messages=self.messages,
                 temperature=1,
                 max_tokens=2048,

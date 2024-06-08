@@ -31,15 +31,19 @@ class Tts:
         self.piper_model_path = None
         self.piper_json_path = None     
         
+        self.xtts_speaker_embedding = None
+        self.gpt_cond_latent = None
+        
         if self.client_config["tts"]["active"] == "xtts":
-            print("\n- starting xtts model ...")
-            server_config = XttsConfig()
-            server_config.load_json(self.server_config["tts"]["xtts"]["location"] + "/config.json")
-            self.xtts_model = Xtts.init_from_config(server_config)
-            self.xtts_model.load_checkpoint(server_config, checkpoint_dir=self.server_config["tts"]["xtts"]["location"], use_deepspeed=True)
-            self.xtts_model.cuda()
+            self.__tts__xtts_init()
+            #wake up the model
+            for byte in self.__tts_xtts_gen("wakeup"):
+                pass
         elif self.client_config["tts"]["active"] == "piper":
             self.__tts_piper_init()
+            #wake up the model
+            for byte in self.__tts_piper_gen("wakeup"):
+                pass
         
         try:
             files = os.listdir("backend/temp_audio")
@@ -53,7 +57,7 @@ class Tts:
         if self.client_config["tts"]["active"] == "google":
             return self.__tts_google(brain_text)
         elif self.client_config["tts"]["active"] == "xtts":
-            return self.__tts_xtts(brain_text)
+            return self.__tts_xtts_gen(brain_text)
         elif self.client_config["tts"]["active"] == "piper":
             return self.__tts_piper_gen(brain_text)
         else:
@@ -69,35 +73,42 @@ class Tts:
             yield bytes
         
         
-    def __tts_xtts(self, brain_text):
-   
-        speaker_embedding, gpt_cond_latent = self.__xtts_load_voice()
+    def __tts__xtts_init(self):
+        print("\n- starting xtts model ...")
+        server_config = XttsConfig()
+        server_config.load_json(self.server_config["tts"]["xtts"]["location"] + "/config.json")
+        self.xtts_model = Xtts.init_from_config(server_config)
+        self.xtts_model.load_checkpoint(server_config, checkpoint_dir=self.server_config["tts"]["xtts"]["location"], use_deepspeed=True)
+        self.xtts_model.cuda()
         
+        self.speaker_embedding, self.gpt_cond_latent = self.__xtts_load_voice()    
+        
+    def __tts_xtts_gen(self, brain_text):
+    
         stream = self.xtts_model.inference_stream(
             brain_text,
             "de",
-            gpt_cond_latent,
-            speaker_embedding,
+            self.gpt_cond_latent,
+            self.speaker_embedding,
             temperature=0.7,
             stream_chunk_size=20
         )
-
+        
         for bytes in stream:
             if Lifecircle.interrupted:
                 break
             bytes = bytes.cpu().numpy().tobytes()
-            yield bytes
-            
-             
+            yield bytes  
             
     def __tts_piper_init(self):
+        print("\n- starting piper model ...")
         operating_system = platform.system()
         if operating_system == "Windows":
             self.piper_binary = self.server_config["tts"]["piper"]["location"]+"/piper.exe"
         else:
             self.piper_binary = self.server_config["tts"]["piper"]["location"]+"/piper"
             
-        voice_path = self.server_config["tts"]["piper"]["location"] +"/voices/"+self.server_config["tts"]["piper"]["voice"]
+        voice_path = self.server_config["tts"]["piper"]["location"] +"/voices/"+self.client_config["tts"]["piper_voice"]
 
         files = os.listdir(voice_path)
         self.piper_model_path = next((os.path.join(voice_path, f) for f in files if f.endswith('.onnx')), None)

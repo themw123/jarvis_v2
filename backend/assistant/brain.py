@@ -10,8 +10,8 @@ class Brain:
         self.client_config = client_config
         self.messages = [ {"role": "system", "content": self.client_config["chat"]["role"]} ]
         self.ollama = Ollama(server_config, client_config, self.messages)
-        self.groq = GroqClass(server_config, self.messages)
-        self.chatgpt = Chatgpt(server_config, self.messages)
+        self.groq = GroqClass(server_config, client_config, self.messages)
+        self.chatgpt = Chatgpt(server_config, client_config ,self.messages)
 
         
     def brain_wrapper(self, stt):
