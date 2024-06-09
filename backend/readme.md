@@ -1,7 +1,7 @@
 ## Setup:
 
 - install cuda on windows from https://developer.nvidia.com/cuda-downloads?target_os=Windows
-- remove torch and torchvision from requirements.txt
+- remove "torch", "torchvision" and "deepspeed @ file://.." from requirements.txt
 - run the following commands to init dependencies:
 
   - for virtual environment: `python -m venv venv`
@@ -12,8 +12,8 @@
 
   - install deepspeed: `pip install deepspeed-0.14.0+ce78a63-cp311-cp311-win_amd64.whl`
 
-  - change transformers version(bug): `pip install transformers==4.40.1`
-
   - use /cu121 if you installed cuda 12 or use /cu118 if you installed cuda 11:
     `pip install torch==2.2.1 torchvision --index-url 
 https://download.pytorch.org/whl/cu121`
+
+  - change transformers version(bug): `pip install transformers==4.40.1`
