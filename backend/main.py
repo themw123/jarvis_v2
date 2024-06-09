@@ -2,7 +2,7 @@
 import os
 import uvicorn
 import json
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import StreamingResponse
 import speech_recognition as sr
 
@@ -46,15 +46,15 @@ async def init(request: Request):
                 
         return {"message": "init done"}
     except Exception as e:
-        return {"error": "init failed", "details": str(e)}
-
+        raise HTTPException(status_code=500, detail={"error": "init failed", "details": str(e)})
+    
 @app.get('/interrupt')
 async def initerrupt():
     try:
         Lifecircle.interrupted = True
         return {"message": "received interrupted"}
     except Exception as e:
-        return {"error": "interrupting failed", "details": str(e)}    
+        raise HTTPException(status_code=500, detail={"error": "interrupting failed", "details": str(e)})
 
 
 @app.post('/stt')
@@ -68,7 +68,7 @@ async def endpoint_stt(request: Request):
         audio_data = sr.AudioData(audio, sample_rate=rate, sample_width=sample_width)
         return stt.stt_wrapper(audio_data)
     except Exception as e:
-        return {"error": "stt failed", "details": str(e)}   
+        raise HTTPException(status_code=500, detail={"error": "stt failed", "details": str(e)})
 
 
 @app.post('/brain')
@@ -85,26 +85,28 @@ async def endpoint_brain(request: Request):
             yield "__END__"  
         return StreamingResponse(generate(), media_type='text/plain')
     except Exception as e:
-        return {"error": "brain failed", "details": str(e)}  
+        raise HTTPException(status_code=500, detail={"error": "brain failed", "details": str(e)})
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    while True:
-        try:
-            brain_sentence = await websocket.receive_text()
-            
-            if brain_sentence.strip() == "__END__":
-                await websocket.send_text("__END__")    
-            else:
-                sentence_byte = tts.tts_wrapper(brain_sentence)
-                for bytes in sentence_byte:
-                    await websocket.send_bytes(bytes)
+    try:
+        while True:
+            try:
+                brain_sentence = await websocket.receive_text()
+                
+                if brain_sentence.strip() == "__END__":
+                    await websocket.send_text("__END__")    
+                else:
+                    sentence_byte = tts.tts_wrapper(brain_sentence)
+                    for bytes in sentence_byte:
+                        await websocket.send_bytes(bytes)
 
 
-        except WebSocketDisconnect:
-            break
-        
+            except WebSocketDisconnect:
+                break
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"error": "tts failed", "details": str(e)})    
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)

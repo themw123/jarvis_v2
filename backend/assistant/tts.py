@@ -31,8 +31,9 @@ class Tts:
         self.piper_model_path = None
         self.piper_json_path = None     
         
+        self.xtts_model = None
         self.xtts_speaker_embedding = None
-        self.gpt_cond_latent = None
+        self.xtts_gpt_cond_latent = None
         
         if self.client_config["tts"]["active"] == "xtts":
             self.__tts__xtts_init()
@@ -81,15 +82,15 @@ class Tts:
         self.xtts_model.load_checkpoint(server_config, checkpoint_dir=self.server_config["tts"]["xtts"]["location"], use_deepspeed=True)
         self.xtts_model.cuda()
         
-        self.speaker_embedding, self.gpt_cond_latent = self.__xtts_load_voice()    
+        self.xtts_speaker_embedding, self.xtts_gpt_cond_latent = self.__xtts_load_voice()    
         
     def __tts_xtts_gen(self, brain_text):
     
         stream = self.xtts_model.inference_stream(
             brain_text,
             "de",
-            self.gpt_cond_latent,
-            self.speaker_embedding,
+            self.xtts_gpt_cond_latent,
+            self.xtts_speaker_embedding,
             temperature=0.7,
             stream_chunk_size=20
         )
