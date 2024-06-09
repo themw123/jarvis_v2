@@ -1,17 +1,13 @@
-import platform
 from cx_Freeze import setup, Executable
 import sys
 sys.setrecursionlimit(5000)
 
 executables = [Executable("main.py", icon="img/ai.ico", target_name="assisstant")]
 
-
-packages = ['pynput', 'Xlib'] if platform.system() != 'Windows' else ['pynput']
-
 options = {
     'build_exe': {
-        'packages': packages,
-        'include_files': ["config.json", "sound", "img"],
+        'packages': ["srsly", "blis", "spacy", "deepspeed"],
+        'include_files': ["config.json", "temp_audio", "img"],
         'excludes': [],
     }
 }

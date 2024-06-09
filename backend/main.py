@@ -1,4 +1,5 @@
 
+import os
 import uvicorn
 import json
 from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
@@ -21,7 +22,14 @@ stt: Stt = None
 brain: Brain = None
 tts: Tts = None
 
-config_path = "backend/config.json"
+
+current_dir = os.path.dirname(os.path.realpath(__file__))
+config_path = os.path.join(current_dir, "config.json")
+
+if 'build' in current_dir:
+    config_path = os.path.abspath(os.path.join(current_dir, "..", "..", "config.json"))
+
+
 with open(config_path, 'r') as f:
     server_config = json.load(f)
         
