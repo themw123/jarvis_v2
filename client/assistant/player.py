@@ -1,5 +1,6 @@
 #contextlib um "hello from the pygame community" zu entfernen
 import contextlib
+import os
 
 from assistant.lifecircle import Lifecircle
 with contextlib.redirect_stdout(None):
@@ -13,9 +14,15 @@ from pydub import AudioSegment
 
 
 class Player:
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    parent_dir = os.path.dirname(current_dir)
+    sound_path = os.path.join(parent_dir, "sound")
+    if 'build' in current_dir:
+        sound_path = os.path.abspath(os.path.join(parent_dir, "..", "..", "..", "sound"))
 
     def __init__(self, config):
         self.config = config
+
         mixer.init()
     def play_wrapper(self, tts):
                 
@@ -104,22 +111,22 @@ class Player:
 
     @staticmethod
     def play_initial():
-        mixer.music.load("client/sound/initial.mp3")
+        mixer.music.load(Player.sound_path+"/initial.mp3")
         mixer.music.play()
         
     @staticmethod
     def play_initial2():
-        mixer.music.load("client/sound/initial2.wav")
+        mixer.music.load(Player.sound_path+"/initial2.wav")
         mixer.music.play()
     
     @staticmethod
     def play_initial3():
-        mixer.music.load("client/sound/initial3.wav")
+        mixer.music.load(Player.sound_path+"/initial3.wav")
         mixer.music.play()
             
     @staticmethod
     def play_wait():
-        mixer.music.load("client/sound/wait.mp3")
+        mixer.music.load(Player.sound_path+"/wait.mp3")
         mixer.music.play()
     @staticmethod
     def pause():
@@ -127,12 +134,12 @@ class Player:
         
     @staticmethod
     def play_record_start():
-        mixer.music.load("client/sound/recording-start.wav")
+        mixer.music.load(Player.sound_path+"/recording-start.wav")
         mixer.music.set_volume(0.3) 
         mixer.music.play()
     
     @staticmethod
     def play_record_end():
-        mixer.music.load("client/sound/recording-end.wav")
+        mixer.music.load(Player.sound_path+"/recording-end.wav")
         mixer.music.set_volume(0.3) 
         mixer.music.play()    
