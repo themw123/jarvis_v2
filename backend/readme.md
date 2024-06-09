@@ -1,5 +1,10 @@
+## Requirements:
+
+- For now only tested on Windows 11 with python 3.11.4. Recommended vram 8gb.
+
 ## Setup:
 
+- copy and rename example.config.json to config.json and adjust the variables to your needs.
 - install cuda on windows from https://developer.nvidia.com/cuda-downloads?target_os=Windows
 - remove "torch", "torchvision" and "deepspeed @ file://.." from requirements.txt
 - run the following commands to init dependencies:
@@ -17,3 +22,15 @@
 https://download.pytorch.org/whl/cu121`
 
   - change transformers version(bug): `pip install transformers==4.40.1`
+
+  - all settings like path to models (whisper, piper and xtts) can be specified in config.json
+
+## Where to get models from?
+
+- https://github.com/SYSTRAN/faster-whisper
+- https://github.com/rhasspy/piper
+- https://huggingface.co/coqui/XTTS-v2
+
+## All about Ollama:
+
+- https://github.com/ollama/ollama
