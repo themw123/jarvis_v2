@@ -80,15 +80,18 @@ def main():
 
 def init_backend():
     print("\n- init backend...")
-    url = config["backend"]["api"] + '/init'
+    url = config["backend"]["api"] + '/init'    
     headers = {'Content-Type': 'application/json'}
-    try:
-        response = requests.post(url, headers=headers, data=json.dumps(config))
-        if response.status_code != 200:
-            raise SystemExit("- Init failed")
-    except Exception as e:
-        print("- Connection to backend failed.")
-        raise SystemExit
+    while True:
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(config))
+            if response.status_code != 200:
+                raise SystemExit("- Init failed")
+        except Exception as e:
+            print("- Connection to backend failed. Retrying...")
+            continue
+            #raise SystemExit
+    
                                      
 def print_user(stt_text):
     print("\n" + colorama.Fore.YELLOW + "("+ config["chat"]["your_name"] +"):", stt_text + colorama.Style.RESET_ALL)
