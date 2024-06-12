@@ -47,9 +47,14 @@ class Tts:
                 pass
         
         try:
-            files = os.listdir("backend/temp_audio")
+            current_dir = os.path.dirname(os.path.realpath(__file__))
+            temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "temp_audio"))
+            if 'build' in current_dir:
+                temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "..","temp_audio"))
+                
+            files = os.listdir(temp_audio_path) 
             for file in files:
-                os.remove(os.path.join("backend/temp_audio", file))     
+                os.remove(os.path.join(temp_audio_path, file))     
         except Exception as e:
             raise Exception(e)
             

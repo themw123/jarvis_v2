@@ -24,8 +24,12 @@ class Stt:
                 compute_type=compute_type
             )
             # wake up the model
+            current_dir = os.path.dirname(os.path.realpath(__file__))
+            wakeup_path = os.path.abspath(os.path.join(current_dir, "..","wakeup.wav"))
+            if 'build' in current_dir:
+                wakeup_path = os.path.abspath(os.path.join(current_dir, "..", "..","wakeup.wav"))
             for segment in self.model.transcribe(
-                audio="backend/wakeup.wav",
+                audio=wakeup_path,
                 beam_size=5
             ):
                 pass

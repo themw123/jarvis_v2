@@ -46,6 +46,7 @@ async def init(request: Request):
                 
         return {"message": "init done"}
     except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail={"error": "init failed", "details": str(e)})
     
 @app.get('/interrupt')
@@ -54,6 +55,7 @@ async def initerrupt():
         Lifecircle.interrupted = True
         return {"message": "received interrupted"}
     except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail={"error": "interrupting failed", "details": str(e)})
 
 
@@ -68,6 +70,7 @@ async def endpoint_stt(request: Request):
         audio_data = sr.AudioData(audio, sample_rate=rate, sample_width=sample_width)
         return stt.stt_wrapper(audio_data)
     except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail={"error": "stt failed", "details": str(e)})
 
 
@@ -85,6 +88,7 @@ async def endpoint_brain(request: Request):
             yield "__END__"  
         return StreamingResponse(generate(), media_type='text/plain')
     except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail={"error": "brain failed", "details": str(e)})
 
 @app.websocket("/ws")
@@ -106,6 +110,7 @@ async def websocket_endpoint(websocket: WebSocket):
             except WebSocketDisconnect:
                 break
     except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail={"error": "tts failed", "details": str(e)})    
 
 if __name__ == '__main__':

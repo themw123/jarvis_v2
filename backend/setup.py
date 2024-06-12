@@ -1,7 +1,13 @@
 from cx_Freeze import setup, Executable
 import sys
+import os
 sys.setrecursionlimit(5000)
 
+
+if not os.path.exists('backend/temp_audio'):
+    os.makedirs('backend/temp_audio')
+open('backend/temp_audio/.keep', 'a').close()
+    
 executables = [Executable("main.py", icon="img/ai.ico", target_name="assisstant")]
 
 options = {
