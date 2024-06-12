@@ -51,7 +51,6 @@ class Tts:
             temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "temp_audio"))
             if 'build' in current_dir:
                 temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "..","temp_audio"))
-                
             files = os.listdir(temp_audio_path) 
             for file in files:
                 os.remove(os.path.join(temp_audio_path, file))     
@@ -124,11 +123,16 @@ class Tts:
         
         #piper-tts on windowws with pip not installable. Using subprocess instead
         #does not support streaming. Therefore, the audio is saved in a temporary file and played afterwards.
-
+        
         if Lifecircle.interrupted:
             return
-    
-        output_file = tempfile.NamedTemporaryFile(delete=False, dir="backend/temp_audio", suffix=".wav")
+        
+        current_dir = os.path.dirname(__file__)
+        temp_audio_path = os.path.abspath(os.path.join(current_dir,"..", "temp_audio"))
+        if 'build' in current_dir:
+            temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "..", "temp_audio"))
+
+        output_file = tempfile.NamedTemporaryFile(delete=False, dir=temp_audio_path, suffix=".wav")
         
         # Construct and execute the Piper TTS command
         command = [
