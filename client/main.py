@@ -87,6 +87,8 @@ def init_backend():
             response = requests.post(url, headers=headers, data=json.dumps(config))
             if response.status_code != 200:
                 raise SystemExit("- Init failed")
+            else:
+                break
         except Exception as e:
             print("- Connection to backend failed. Retrying...")
             continue
