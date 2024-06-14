@@ -8,7 +8,7 @@
 
 ## Setup - Pre Build:
 
-- download .zip from Releases
+- download client.7z from Releases
 - extract it anywhere you want.
 - open config.json and adjust the variables to your needs.
 - double click assisstant.exe
