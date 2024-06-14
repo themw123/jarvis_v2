@@ -37,7 +37,6 @@ class Stt:
 
 
     def stt_wrapper(self, audio: AudioData):
-        print("- interpret...")
         if self.client_config["stt"]["active"] == "whisper_local":
             text = self.__stt_whisper_local(audio)
         elif self.client_config["stt"]["active"] == "whisper":
