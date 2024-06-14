@@ -28,8 +28,12 @@ def main():
         config = json.load(f)
         
     print("\n- start assistant...")
-    print("\n- start recording by saying '"+ config["recorder"]["startword"]+"' or "+config["recorder"]["startkey"])
-    print("- stop recording by saying '"+config["recorder"]["stopword"]+"' or "+config["recorder"]["stopkey"])    
+    #startkey = config["recorder"]["startkey"]
+    #stopkey = config["recorder"]["stopkey"]
+    startkey = "ctrl+space"
+    stopkey = "ctrl+shift"
+    print("\n- start recording by saying '"+ config["recorder"]["startword"]+"' or "+ startkey)
+    print("- stop recording by saying '"+config["recorder"]["stopword"]+"' or "+ stopkey)    
         
     colorama.init()
     
