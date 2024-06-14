@@ -19,3 +19,7 @@ Jarvis is your conversational assistant available as a console programm. It can 
   - piper (local)
   - xtts (local)
   - google gtts
+
+## Setup:
+
+- read /backend and /client readme

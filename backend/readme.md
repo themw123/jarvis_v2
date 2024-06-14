@@ -1,11 +1,33 @@
-## Requirements:
+## Requirements (Pre Build and Development):
 
-- For now only tested on Windows 11 with python 3.11.4. Recommended vram 8gb.
+- Pre Build only tested on Windows 11
+- Development only tested on Windows 11 and python 3.11.4
 
-## Setup:
+## Setup (Pre Build and Development):
+
+- install cuda on windows from https://developer.nvidia.com/cuda-downloads?target_os=Windows
+
+- download and install the models you want to use(faster-whisper, piper and xtts-v2).
+
+  https://github.com/SYSTRAN/faster-whisper
+  https://github.com/rhasspy/piper
+  https://huggingface.co/coqui/XTTS-v2
+
+- install ollama and download at least one model within ollama
+  https://github.com/ollama/ollama
+
+## Setup - Pre Build
+
+- download .zip from Releases
+- extract it anywhere you want.
+- open config.json and adjust the variables to your needs.
+- double click assisstant.exe
+- now backend should be running and wait for client to connect
+
+## Setup - Development:
 
 - copy and rename example.config.json to config.json and adjust the variables to your needs.
-- install cuda on windows from https://developer.nvidia.com/cuda-downloads?target_os=Windows
+
 - remove "torch", "torchvision" and "deepspeed @ file://.." from requirements.txt
 - run the following commands to init dependencies:
 
@@ -22,15 +44,3 @@
 https://download.pytorch.org/whl/cu121`
 
   - change transformers version(bug): `pip install transformers==4.40.1`
-
-  - all settings like path to models (whisper, piper and xtts) can be specified in config.json
-
-## Where to get models from?
-
-- https://github.com/SYSTRAN/faster-whisper
-- https://github.com/rhasspy/piper
-- https://huggingface.co/coqui/XTTS-v2
-
-## All about Ollama:
-
-- https://github.com/ollama/ollama
