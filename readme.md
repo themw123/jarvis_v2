@@ -23,6 +23,7 @@ Jarvis is your conversational assistant available as a console programm. It can 
 ## Demo Video
 
 with completely local setup: BRAIN - ollama(LLama3:8b), STT - whisper_local(medium) and TTS - piper
+
 https://github.com/themw123/jarvis_v2/assets/80266862/bf8d4320-db0b-4213-ae3d-6ca8f572dc2d
 
 
