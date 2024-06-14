@@ -1,3 +1,5 @@
+# Not maintained anymore. Use Branch server-client
+
 # Jarvis
 
 Jarvis is your conversational assistant available as a console programm. It can be used all local.
