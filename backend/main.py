@@ -26,7 +26,7 @@ tts: Tts = None
 current_dir = os.path.dirname(os.path.realpath(__file__))
 config_path = os.path.join(current_dir, "config.json")
 
-if 'build' in current_dir:
+if 'lib' in current_dir:
     config_path = os.path.abspath(os.path.join(current_dir, "..", "..", "config.json"))
 
 

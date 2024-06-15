@@ -49,7 +49,7 @@ class Tts:
         try:
             current_dir = os.path.dirname(os.path.realpath(__file__))
             temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "temp_audio"))
-            if 'build' in current_dir:
+            if 'lib' in current_dir:
                 temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "..","temp_audio"))
             files = os.listdir(temp_audio_path) 
             for file in files:
