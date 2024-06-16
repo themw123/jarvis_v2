@@ -18,7 +18,7 @@ class Player:
     parent_dir = os.path.dirname(current_dir)
     sound_path = os.path.join(parent_dir, "sound")
     if 'lib' in current_dir:
-        sound_path = os.path.abspath(os.path.join(parent_dir, "..", "..", "..", "sound"))
+        sound_path = os.path.abspath(os.path.join(parent_dir, "..", "sound"))
 
     def __init__(self, config):
         self.config = config
