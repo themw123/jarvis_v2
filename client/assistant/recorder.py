@@ -1,12 +1,9 @@
-import os
 import threading
 import time
-import numpy as np
 import pyaudio
 import speech_recognition as sr
 from pynput import keyboard
-import openwakeword
-from openwakeword.model import Model
+from websocket import create_connection
 
 from assistant.lifecircle import Lifecircle
 from assistant.player import Player
@@ -15,6 +12,7 @@ class Recorder:
     
     #init
     def __init__(self, config):
+        self.websocket = None
         self.config = config
         self.stream = None
         self.p = pyaudio.PyAudio()
@@ -24,9 +22,7 @@ class Recorder:
         self.channels = 1
         self.format = pyaudio.paInt16
         self.frames = []
-         
-        self.openwakeword = Model(wakeword_models=["E:\models\openwakeword\\alexa_v0.1.onnx"],)
-        
+                 
         self.event = threading.Event()
 
         self.ctrl_pressed = False
@@ -34,10 +30,12 @@ class Recorder:
         self.space_pressed = False
         
         self.recording = False
+            
+        self.connect()  
                 
         self.__init_recorder()
 
-
+        
  
     def __init_recorder(self):
         # Variables for Pyaudio
@@ -146,15 +144,20 @@ class Recorder:
             self.__after_recording()
             listener2.join()
 
+    
+    def connect(self):
+        self.websocket = create_connection(self.config["backend"]["websocket"]+"/wakeword")
+        
+        
     def listen_on_voice(self):
         recognizerSpokenText = sr.Recognizer()
         recognizerSpokenText.pause_threshold = self.config["recorder"]["pause_threshold"]
         recognizerSpokenText.non_speaking_duration = self.config["recorder"]["non_speaking_duration"]
         prediction_has_wakeword = False
         while True:
-            openwakeword_audio = np.frombuffer(self.stream.read(self.chunk), dtype=np.int16)
-            prediction = self.openwakeword.predict(openwakeword_audio)
-            if prediction["alexa_v0.1"] > 0.9 and not prediction_has_wakeword: 
+            self.websocket.send_bytes(self.stream.read(self.chunk))
+            prediction = float(self.websocket.recv())
+            if prediction > self.config["openwakeword"]["threshold"] and not prediction_has_wakeword: 
                 prediction_has_wakeword = True
                 if Lifecircle.running:
                     Lifecircle.do_interrupt(self.config)
@@ -173,5 +176,7 @@ class Recorder:
                             pass
                         except sr.RequestError as e:
                             pass
-            elif prediction["alexa_v0.1"] < 0.01:
-                prediction_has_wakeword = False        
+            elif prediction < 0.01:
+                prediction_has_wakeword = False  
+            
+

@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconn
 from fastapi.responses import StreamingResponse
 import speech_recognition as sr
 
+from assistant.wakeword import Wakeword
 from assistant.brain import Brain
 from assistant.lifecircle import Lifecircle
 from assistant.stt import Stt
@@ -18,6 +19,7 @@ server_config = None
 client_config = None
 
 Lifecircle.interrupted = False
+wakeword: Wakeword = None
 stt: Stt = None
 brain: Brain = None
 tts: Tts = None
@@ -36,10 +38,11 @@ with open(config_path, 'r') as f:
 
 @app.post('/init')
 async def init(request: Request):
-    global stt, brain, tts
+    global wakeword, stt, brain, tts
     try:
         client_config = await request.json()
         
+        wakeword = Wakeword(server_config, client_config)
         stt = Stt(server_config, client_config)
         brain = Brain(server_config, client_config)
         tts = Tts(server_config, client_config)
@@ -91,8 +94,8 @@ async def endpoint_brain(request: Request):
         print(str(e))
         raise HTTPException(status_code=500, detail={"error": "brain failed", "details": str(e)})
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+@app.websocket("/tts")
+async def websocket_tts(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
@@ -111,7 +114,23 @@ async def websocket_endpoint(websocket: WebSocket):
                 break
     except Exception as e:
         print(str(e))
-        raise HTTPException(status_code=500, detail={"error": "tts failed", "details": str(e)})    
+        raise HTTPException(status_code=500, detail={"error": "tts failed", "details": str(e)})  
+    
+    
+@app.websocket("/wakeword")
+async def websocket_wakeword(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            try:
+                bytes = await websocket.receive_bytes()
+                prediction = wakeword.wakeword_wrapper(bytes)
+                await websocket.send_text(str(prediction))
+            except WebSocketDisconnect:
+                break
+    except Exception as e:
+        print(str(e))
+        raise HTTPException(status_code=500, detail={"error": "tts failed", "details": str(e)})      
 
 if __name__ == '__main__':
     uvicorn.run(app, host='0.0.0.0', port=8000)
