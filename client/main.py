@@ -50,13 +50,13 @@ def main():
     listen_keyboard_interupt = threading.Thread(target=Lifecircle.listen_to_interupt_keyboard, args=(recorder, config))
     listen_keyboard_interupt.start()
     #for voice interrupting with stopword. Only works with headphones on
-    listen_voice_interupt = threading.Thread(target=Lifecircle.listen_to_interupt_voice, args=(recorder, config))
-    listen_voice_interupt.start()
+    #listen_voice_interupt = threading.Thread(target=Lifecircle.listen_to_interupt_voice, args=(recorder, config))
+    #listen_voice_interupt.start()
 
     listen_keyboard = threading.Thread(target=recorder.listen_on_keyboard)
     listen_keyboard.start()
     
-    listen_voice = threading.Thread(target=recorder.listen_on_voice, args=("default",))
+    listen_voice = threading.Thread(target=recorder.listen_on_voice)
     listen_voice.start()
     
     Player.play_initial()

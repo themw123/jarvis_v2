@@ -1,8 +1,12 @@
+import os
 import threading
 import time
+import numpy as np
 import pyaudio
 import speech_recognition as sr
 from pynput import keyboard
+import openwakeword
+from openwakeword.model import Model
 
 from assistant.lifecircle import Lifecircle
 from assistant.player import Player
@@ -15,11 +19,13 @@ class Recorder:
         self.stream = None
         self.p = pyaudio.PyAudio()
         self.audio = None
-        self.chunk = 1024
-        self.rate = 44100
+        self.chunk = 1280
+        self.rate = 16000
         self.channels = 1
         self.format = pyaudio.paInt16
         self.frames = []
+         
+        self.openwakeword = Model(wakeword_models=["E:\models\openwakeword\\alexa_v0.1.onnx"],)
         
         self.event = threading.Event()
 
@@ -140,29 +146,22 @@ class Recorder:
             self.__after_recording()
             listener2.join()
 
-    def listen_on_voice(self, mode):
-        recognizerStartword = sr.Recognizer()
+    def listen_on_voice(self):
         recognizerSpokenText = sr.Recognizer()
         recognizerSpokenText.pause_threshold = self.config["recorder"]["pause_threshold"]
         recognizerSpokenText.non_speaking_duration = self.config["recorder"]["non_speaking_duration"]
+        prediction_has_wakeword = False
         while True:
-            startword = self.config["recorder"]["startword"]
-            stopword = self.config["recorder"]["stopword"]
-    
-            if mode == "interrupt":
-                startword = stopword
-
-            with sr.Microphone() as source:
-                while True:
-                    recognizerStartword.adjust_for_ambient_noise(source, duration=1)
-                    recognizerSpokenText.adjust_for_ambient_noise(source, duration=1)
-                    audio_data = recognizerStartword.listen(source)
-                    self.audio = audio_data  
-                    try:
-                        text = recognizerStartword.recognize_google(audio_data, language="de-DE")
-                        if startword.lower() in text.lower():
-                            if mode == "interrupt":
-                                break
+            openwakeword_audio = np.frombuffer(self.stream.read(self.chunk), dtype=np.int16)
+            prediction = self.openwakeword.predict(openwakeword_audio)
+            if prediction["alexa_v0.1"] > 0.9 and not prediction_has_wakeword: 
+                prediction_has_wakeword = True
+                if Lifecircle.running:
+                    Lifecircle.do_interrupt(self.config)
+                with sr.Microphone() as source:
+                    while True:
+                        recognizerSpokenText.adjust_for_ambient_noise(source, duration=1)
+                        try:
                             Player.play_record_start()
                             print("\n- listen...\n")
                             audio_data = recognizerSpokenText.listen(source)
@@ -170,11 +169,9 @@ class Recorder:
                             self.audio = audio_bytes
                             self.__after_recording()
                             break
-                        pass
-                    except sr.UnknownValueError:
-                        pass
-                    except sr.RequestError as e:
-                        pass
-                    
-        
-        
+                        except sr.UnknownValueError:
+                            pass
+                        except sr.RequestError as e:
+                            pass
+            elif prediction["alexa_v0.1"] < 0.01:
+                prediction_has_wakeword = False        

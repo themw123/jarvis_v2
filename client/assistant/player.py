@@ -1,6 +1,7 @@
 #contextlib um "hello from the pygame community" zu entfernen
 import contextlib
 import os
+import time
 
 from assistant.lifecircle import Lifecircle
 with contextlib.redirect_stdout(None):
@@ -142,4 +143,10 @@ class Player:
     def play_record_end():
         mixer.music.load(Player.sound_path+"/recording-end.wav")
         mixer.music.set_volume(0.3) 
-        mixer.music.play()    
+        mixer.music.play()   
+        
+    @staticmethod
+    def play_cancel():
+        mixer.music.load(Player.sound_path+"/cancel.mp3")
+        mixer.music.set_volume(0.3) 
+        mixer.music.play()   

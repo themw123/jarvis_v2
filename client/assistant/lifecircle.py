@@ -21,6 +21,7 @@ class Lifecircle:
         from assistant.player import Player
         Lifecircle.interrupted = True
         Player.pause()
+        Player.play_cancel()
         url = config["backend"]["api"]+'/interrupt'
         headers = {'Content-Type': 'plain/text'}
         response = requests.get(url, headers=headers)
