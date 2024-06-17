@@ -32,8 +32,9 @@ def main():
     #stopkey = config["recorder"]["stopkey"]
     startkey = "ctrl+space"
     stopkey = "ctrl+shift"
-    print("\n- start recording by saying '"+ config["recorder"]["startword"]+"' or "+ startkey)
-    print("- stop recording by saying '"+config["recorder"]["stopword"]+"' or "+ stopkey)    
+    keyword = config["openwakeword"]["model"].split('_v')[0]
+    print("\n- start recording by saying '"+keyword+"' or "+ startkey)
+    print("- stop recording by saying '"+keyword+"' or "+ stopkey)    
         
     colorama.init()
     
