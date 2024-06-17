@@ -11,7 +11,8 @@ class Wakeword:
         
         #embedding_model and melspectrogram are required for openwakeword. It gets downloaded in resources/models in site-packegas of openwakeword
         #did not find a way to change the location. It seems that openwakeword can only load the embedding_model and melspectrogram models from this location
-        openwakeword.utils.download_models(model_names=["embedding_model", "melspectrogram", "alexa_v0.1"])
+        #openwakeword.utils.download_models(model_names=["embedding_model", "melspectrogram", "alexa_v0.1"])
+        openwakeword.utils.download_models(model_names=[])
         # the following makes only sence if we would have all models manually downloaded and placed in a specific folder
         #self.openwakeword = Model(wakeword_models=["E:\models\openwakeword\\alexa_v0.1.onnx"],)
         self.openwakeword = Model(wakeword_models=[self.client_config["openwakeword"]["model"]],)
