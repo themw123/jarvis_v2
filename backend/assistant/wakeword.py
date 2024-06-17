@@ -1,6 +1,8 @@
 import numpy as np
 import openwakeword
 from openwakeword.model import Model
+import logging
+logging.getLogger("root").setLevel(logging.ERROR)
 
 class Wakeword:
 
@@ -8,7 +10,6 @@ class Wakeword:
         self.server_config = server_config
         self.client_config = client_config
         print('\n- starting wakeword model')
-        
         #embedding_model and melspectrogram are required for openwakeword. It gets downloaded in resources/models in site-packegas of openwakeword
         #did not find a way to change the location. It seems that openwakeword can only load the embedding_model and melspectrogram models from this location
         #openwakeword.utils.download_models(model_names=["embedding_model", "melspectrogram", "alexa_v0.1"])
