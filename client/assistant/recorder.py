@@ -163,7 +163,7 @@ class Recorder:
                     Lifecircle.do_interrupt(self.config)
                 with sr.Microphone() as source:
                     while True:
-                        recognizerSpokenText.adjust_for_ambient_noise(source, duration=1)
+                        recognizerSpokenText.adjust_for_ambient_noise(source, duration=self.config["recorder"]["ambient_record_time"])
                         try:
                             Player.play_record_start()
                             print("\n- listen...\n")
