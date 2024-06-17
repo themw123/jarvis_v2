@@ -10,14 +10,14 @@
 
 - download client.7z from Releases
 - extract it anywhere you want.
-- open config.json and adjust the variables to your needs.
+- rename example.config.json to config.json and adjust the variables to your needs.
 - double click assisstant.exe
 - now client should be running and try to connect to backend
 - look below at "How to Use"
 
 ## Setup - Development:
 
-- copy and rename example.config.json to config.json and adjust the variables to your needs.
+- rename example.config.json to config.json and adjust the variables to your needs.
 - run the following commands to init dependencies:
 
 ### windows:

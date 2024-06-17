@@ -1,7 +1,7 @@
 {
   "backend": {
     "api": "http://localhost:8000",
-    "websocket": "ws://localhost:8000/ws"
+    "websocket": "ws://localhost:8000"
   },
   "recorder": {
     "description": "Stopword only works with headphones on. It is disabled for the moment. The int values are just for the real audio that should get translated to test not for the recognition of start word",
@@ -9,6 +9,7 @@
     "stopkey": "",
     "startword": "record",
     "stopword": "stop",
+    "ambient_record_time": 0.5,
     "pause_threshold": 2,
     "non_speaking_duration": 2
   },
@@ -18,8 +19,12 @@
     "your_name": "Marvin",
     "role": "Du heißt Jarvis und sollst immer auf deutsch antworten. Deine Antworten werden mittels text to speech vorgelesen, sollen präzise sein und keine Sonderzeichen wie Sternchen oder Rauten enthalten."
   },
+  "openwakeword": {
+    "model": "alexa_v0.1",
+    "threshold": 0.7
+  },
   "brain": {
-    "active": "groq",
+    "active": "ollama",
     "ollama_model": "llama3:8b",
     "groq_model": "llama3-70b-8192",
     "openai_model": "gpt-4o"
@@ -28,7 +33,7 @@
     "active": "whisper_local"
   },
   "tts": {
-    "active": "xtts",
+    "active": "piper",
     "piper_voice": "default_german_voice",
     "xtts_voice": "jarvis"
   }

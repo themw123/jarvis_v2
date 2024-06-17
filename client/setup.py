@@ -11,7 +11,7 @@ packages = ['pynput', 'Xlib'] if platform.system() != 'Windows' else ['pynput']
 options = {
     'build_exe': {
         'packages': packages,
-        'include_files': ["config.json", "sound", "img"],
+        'include_files': ["example.config.json", "sound", "img"],
         'excludes': [],
     }
 }

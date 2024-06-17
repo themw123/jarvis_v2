@@ -13,7 +13,7 @@ executables = [Executable("main.py", icon="img/ai.ico", target_name="assisstant"
 options = {
     'build_exe': {
         'packages': ["srsly", "blis", "spacy", "deepspeed", "uvicorn"],
-        'include_files': ["config.json", "temp_audio", "img", "wakeup.wav"],
+        'include_files': ["example.config.json", "temp_audio", "img", "wakeup.wav"],
         'excludes': [],
     }
 }

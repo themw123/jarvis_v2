@@ -20,13 +20,13 @@
 
 - download backend.7z from Releases
 - extract it anywhere you want.
-- open config.json and adjust the variables to your needs.
+- rename example.config.json to config.json and adjust the variables to your needs.
 - double click assisstant.exe
 - now backend should be running and wait for client to connect
 
 ## Setup - Development:
 
-- copy and rename example.config.json to config.json and adjust the variables to your needs.
+- rename example.config.json to config.json and adjust the variables to your needs.
 
 - remove "torch", "torchvision" and "deepspeed @ file://.." from requirements.txt
 - run the following commands to init dependencies:
