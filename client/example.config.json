@@ -8,8 +8,8 @@
     "startkey": "",
     "stopkey": "",
     "ambient_record_time": 0.5,
-    "pause_threshold": 2,
-    "non_speaking_duration": 2
+    "pause_threshold": 1.5,
+    "non_speaking_duration": 1.5
   },
   "chat": {
     "description": "role_name: AI name in Chat, your_name: Your Name in Chat, role: Assignment of a role for the AI",
