@@ -30,8 +30,7 @@ class Recorder:
         self.space_pressed = False
         
         self.recording = False
-            
-        self.connect()  
+          
                 
         self.__init_recorder()
 
@@ -150,6 +149,7 @@ class Recorder:
         
         
     def listen_on_voice(self):
+        self.connect()
         recognizerSpokenText = sr.Recognizer()
         recognizerSpokenText.pause_threshold = self.config["recorder"]["pause_threshold"]
         recognizerSpokenText.non_speaking_duration = self.config["recorder"]["non_speaking_duration"]
