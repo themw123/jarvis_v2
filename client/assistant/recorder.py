@@ -155,8 +155,8 @@ class Recorder:
         recognizerSpokenText.non_speaking_duration = self.config["recorder"]["non_speaking_duration"]
         prediction_has_wakeword = False
         while True:
-            self.websocket.send_bytes(self.stream.read(self.chunk))
             try:
+                self.websocket.send_bytes(self.stream.read(self.chunk))
                 prediction = float(self.websocket.recv())
             except:
                 prediction = 0.0
