@@ -156,7 +156,10 @@ class Recorder:
         prediction_has_wakeword = False
         while True:
             self.websocket.send_bytes(self.stream.read(self.chunk))
-            prediction = float(self.websocket.recv())
+            try:
+                prediction = float(self.websocket.recv())
+            except:
+                prediction = 0.0
             if prediction > self.config["openwakeword"]["threshold"] and not prediction_has_wakeword: 
                 prediction_has_wakeword = True
                 if Lifecircle.running:
