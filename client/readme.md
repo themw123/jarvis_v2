@@ -38,7 +38,5 @@
 
 ## How to Use:
 
-- start recording by saying the startword or startkey
-- interrupt assistent by saving the stopword or stopkey
-- best practise by saying something before the startword or stopword and wait for a short moment. For example "okay ... [startword]"
-- keeps conversation until next restart
+- start recording by saying the keyword(depends on the openwakeword model, default is hey_jarvis) or startkey
+- interrupt assistent by saving the keyword or stopkey
