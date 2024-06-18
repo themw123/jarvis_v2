@@ -2,7 +2,7 @@
 
 Jarvis is your conversational assistant available as a console programm. It can be used all local. The software consists of client and server.
 
-- Wake Word:
+- Wake Word 👋:
 
   - openwakeword(local)
 
