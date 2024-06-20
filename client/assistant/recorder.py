@@ -15,6 +15,7 @@ class Recorder:
         self.websocket = None
         self.config = config
         self.stream = None
+        self.stream_wakeword = None
         self.p = pyaudio.PyAudio()
         self.audio = None
         self.chunk = 1280
@@ -43,6 +44,12 @@ class Recorder:
                         rate=self.rate,
                         input=True,
                         frames_per_buffer=self.chunk)
+
+        self.stream_wakeword = self.p.open(format=self.format,
+                channels=self.channels,
+                rate=self.rate,
+                input=True,
+                frames_per_buffer=self.chunk)
     
         
     def __after_recording(self):
@@ -156,7 +163,7 @@ class Recorder:
         prediction_has_wakeword = False
         while True:
             try:
-                self.websocket.send_bytes(self.stream.read(self.chunk))
+                self.websocket.send_bytes(self.stream_wakeword.read(self.chunk))
                 prediction = float(self.websocket.recv())
             except:
                 prediction = 0.0
