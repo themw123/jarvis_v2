@@ -52,6 +52,7 @@ class Recorder:
     
         
     def __after_recording(self):
+        self.recording = False
         Lifecircle.running = True
         Lifecircle.interrupted = False
         Player.play_record_end()
@@ -68,20 +69,24 @@ class Recorder:
         except AttributeError:
             pass
     
-    def __on_release_ctrl_space(self, key):
+    def __on_release_ctrl_space(self, key, listener):
         try:
             if key == keyboard.Key.ctrl_l:
                 self.ctrl_pressed = False
                 if self.space_pressed:
                     self.space_pressed = False
-                    self.recording = not self.recording
-                    return False
+                    if listener == "listener2":
+                        return False
+                    elif not self.recording and not Lifecircle.running:
+                        return False
             elif key == keyboard.Key.space:
                 self.space_pressed = False
                 if self.ctrl_pressed:
                     self.ctrl_pressed = False
-                    self.recording = not self.recording
-                    return False
+                    if listener == "listener2":
+                        return False
+                    elif not self.recording and not Lifecircle.running:
+                        return False
         except AttributeError:
             pass
         
@@ -122,32 +127,35 @@ class Recorder:
 
     def listen_on_keyboard(self):         
         while True:
-            
             listener1 = keyboard.Listener(
-                on_press=self.__on_press_ctrl_space, on_release=self.__on_release_ctrl_space)
+                on_press=self.__on_press_ctrl_space, 
+                on_release=lambda key: self.__on_release_ctrl_space(key, "listener1")
+            )
 
             listener2 = keyboard.Listener(
-                on_press=self.__on_press_ctrl_space, on_release=self.__on_release_ctrl_space)
+                on_press=self.__on_press_ctrl_space, 
+                on_release=lambda key: self.__on_release_ctrl_space(key, "listener2")
+            )
             
             while Lifecircle.running:
                 time.sleep(0.1)
               
             listener1.start()
-            listener1.join()    
+            listener1.join()
+            self.recording = True    
             listener2.start()
                     
             self.frames = []
             Player.play_record_start()
             print("\n- listen...")
             
-            while self.recording:    
+            while listener2.is_alive():    
                 data = self.stream.read(self.chunk)
-                self.frames.append(data)   
-    
+                self.frames.append(data) 
+                
             audio_data = b''.join(self.frames)
             self.audio = audio_data
             self.__after_recording()
-            listener2.join()
 
     
     def connect(self):
@@ -173,6 +181,7 @@ class Recorder:
                     prediction = 0.0
                 if prediction > self.config["openwakeword"]["threshold"] and not prediction_has_wakeword: 
                     prediction_has_wakeword = True
+                    self.recording = True
                     if Lifecircle.running:
                         Lifecircle.do_interrupt(self.config)
                     while True:
