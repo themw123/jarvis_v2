@@ -9,7 +9,7 @@ class Stt:
         url = self.config["backend"]["api"]+'/stt'  
         headers = {'Content-Type': 'application/octet-stream', 'rate': str(rate), 'sample-width': str(sample_width)}
         
-        print("- interpret...")
+        print("\n- interpret...")
         response = requests.post(url, headers=headers, data=audio)
         if response.status_code != 200:
             raise SystemExit("- STT failed")

@@ -57,9 +57,12 @@ def main():
     listen_voice = threading.Thread(target=recorder.listen_on_voice)
     listen_voice.start()
     
-    Player.play_initial()
+    isStartup = True
     while True:
-        print("\n- waiting for you...")
+        if not isStartup:
+            print("\n- waiting for you...")
+        else:
+            isStartup = False
         recorder.event.clear()
         recorder.event.wait()    
          

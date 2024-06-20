@@ -31,7 +31,6 @@ class Recorder:
         self.space_pressed = False
         
         self.recording = False
-          
                 
         self.__init_recorder()
 
@@ -139,7 +138,7 @@ class Recorder:
                     
             self.frames = []
             Player.play_record_start()
-            print("- listen...\n")
+            print("\n- listen...")
             
             while self.recording:    
                 data = self.stream.read(self.chunk)
@@ -161,22 +160,25 @@ class Recorder:
         recognizerSpokenText.pause_threshold = self.config["recorder"]["pause_threshold"]
         recognizerSpokenText.non_speaking_duration = self.config["recorder"]["non_speaking_duration"]
         prediction_has_wakeword = False
-        while True:
-            try:
-                self.websocket.send_bytes(self.stream_wakeword.read(self.chunk))
-                prediction = float(self.websocket.recv())
-            except:
-                prediction = 0.0
-            if prediction > self.config["openwakeword"]["threshold"] and not prediction_has_wakeword: 
-                prediction_has_wakeword = True
-                if Lifecircle.running:
-                    Lifecircle.do_interrupt(self.config)
-                with sr.Microphone() as source:
+        with sr.Microphone() as source:
+            print("\n- One time calculating your ambient background noices. Do not say anything...")
+            recognizerSpokenText.adjust_for_ambient_noise(source, duration=self.config["recorder"]["ambient_record_time"])
+            Player.play_initial()
+            print("\n- waiting for you...")
+            while True:
+                try:
+                    self.websocket.send_bytes(self.stream_wakeword.read(self.chunk))
+                    prediction = float(self.websocket.recv())
+                except:
+                    prediction = 0.0
+                if prediction > self.config["openwakeword"]["threshold"] and not prediction_has_wakeword: 
+                    prediction_has_wakeword = True
+                    if Lifecircle.running:
+                        Lifecircle.do_interrupt(self.config)
                     while True:
-                        recognizerSpokenText.adjust_for_ambient_noise(source, duration=self.config["recorder"]["ambient_record_time"])
                         try:
                             Player.play_record_start()
-                            print("\n- listen...\n")
+                            print("\n- listen...")
                             audio_data = recognizerSpokenText.listen(source)
                             audio_bytes = audio_data.get_wav_data(convert_rate=self.rate, convert_width=self.p.get_sample_size(self.format))
                             self.audio = audio_bytes
@@ -186,7 +188,7 @@ class Recorder:
                             pass
                         except sr.RequestError as e:
                             pass
-            elif prediction < 0.01:
-                prediction_has_wakeword = False  
+                elif prediction < 0.01:
+                    prediction_has_wakeword = False
             
 

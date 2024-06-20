@@ -10,11 +10,6 @@ class Lifecircle:
         while True:
             recorder.listen_on_keyboard_interrupt()
             Lifecircle.do_interrupt(config)
-    @staticmethod    
-    def listen_to_interupt_voice(recorder, config):
-        while True:
-            recorder.listen_on_voice("interrupt")
-            Lifecircle.do_interrupt(config)
     
     @staticmethod
     def do_interrupt(config):
