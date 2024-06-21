@@ -12,15 +12,11 @@ class GroqClass:
         self.messages = messages
         self.client = Groq(api_key=self.server_config["brain"]["groq"]["api_key"])
 
-    def ask_wrapper(self, stt):
-        return self.__ask_generator(stt)
+    def ask_wrapper(self):
+        return self.__ask_generator()
 
-    def __ask_generator(self, stt):
+    def __ask_generator(self):
         try:            
-            self.messages.append(
-                {"role": "user", "content": stt},
-            )
-            
             stream = self.client.chat.completions.create(
                 model=self.client_config["brain"]["groq_model"],
                 messages=self.messages,

@@ -1,4 +1,6 @@
 import re
+import tiktoken
+
 from assistant.brains.chatgpt import Chatgpt
 from assistant.brains.ollama import Ollama
 from assistant.brains.groq import GroqClass
@@ -15,14 +17,40 @@ class Brain:
 
         
     def brain_wrapper(self, stt):
+        self.messages.append(
+            {"role": "user", "content": stt},
+        )
+        self.__check_max_tokens(stt=stt)
         if self.client_config["brain"]["active"] == "ollama":
-            return self.__stream_sentences_from_chunks(self.ollama.ask_wrapper(stt=stt))
+            return self.__stream_sentences_from_chunks(self.ollama.ask_wrapper())
         elif self.client_config["brain"]["active"] == "groq":
-            return self.__stream_sentences_from_chunks(self.groq.ask_wrapper(stt=stt))
+            return self.__stream_sentences_from_chunks(self.groq.ask_wrapper())
         elif self.client_config["brain"]["active"] == "chatgpt":
-            return self.__stream_sentences_from_chunks(self.chatgpt.ask_wrapper(stt=stt))
+            return self.__stream_sentences_from_chunks(self.chatgpt.ask_wrapper())
         else:
             raise Exception(self.client_config["brain"]["active"] + ": This brain type does not exist")
+        
+        
+    def __check_max_tokens(self, stt):
+        token_count = self.__count_tokens()   
+        if token_count > self.client_config["brain"]["max_tokens"]:
+            self.__trim_messages()
+            
+    def __count_tokens(self, model="gpt-3.5-turbo"):
+        enc = tiktoken.encoding_for_model(model)
+        token_count = 0
+        for message in self.messages:
+            token_count += len(enc.encode(message["content"])) 
+        return token_count     
+    
+        
+    def __trim_messages(self):
+        # Remove the oldest non-system messag
+        while True:
+            token_count = self.__count_tokens()
+            if token_count <= self.client_config["brain"]["max_tokens"]:
+                break
+            del self.messages[1]    
         
     def __stream_sentences_from_chunks(self, chunks_stream):        
         #return/yield every x sententes

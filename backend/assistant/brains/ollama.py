@@ -15,14 +15,11 @@ class Ollama:
             self.__wakeup_ollama()
 
             
-    def ask_wrapper(self, stt):
-        return self.__ask_generator(stt)
+    def ask_wrapper(self):
+        return self.__ask_generator()
 
-    def __ask_generator(self, stt):
+    def __ask_generator(self):
         try:            
-            self.messages.append(
-                {"role": "user", "content": stt},
-            )
             stream = self.client.chat(
                 model=self.client_config["brain"]["ollama_model"],
                 messages=self.messages,

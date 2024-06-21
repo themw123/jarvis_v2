@@ -13,21 +13,18 @@ class Chatgpt:
         self.client_config = client_config
         self.messages = self_messages
             
-    def ask_wrapper(self, stt):
-        return self.__ask_generator(stt)
+    def ask_wrapper(self):
+        return self.__ask_generator()
 
 
     
-    def __ask_generator(self, stt):
+    def __ask_generator(self):
         try:
             client = OpenAI(
                 api_key=self.server_config["brain"]["chatgpt"]["api_key"],
 
             )         
-            self.messages.append(
-                {"role": "user", "content": stt},
-            )
-                        
+          
             stream = client.chat.completions.create(
                 model=self.client_config["brain"]["openai_model"],
                 messages=self.messages,
