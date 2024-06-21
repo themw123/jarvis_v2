@@ -32,6 +32,8 @@ class Brain:
         
         
     def __check_max_tokens(self, stt):
+        if self.client_config["brain"]["max_tokens"] == -1:
+            return
         token_count = self.__count_tokens()   
         if token_count > self.client_config["brain"]["max_tokens"]:
             self.__trim_messages()

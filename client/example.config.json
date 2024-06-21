@@ -22,9 +22,9 @@
     "threshold": 0.7
   },
   "brain": {
-    "description": "common token lenghts: 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144",
-    "max_tokens": 4096,
-    "active": "ollama",
+    "description": "common token lenghts: -1(unlimited, the entire text is sent to the model/api), 1024, 2048, 4096, 8192, 16384, ...",
+    "max_tokens": -1,
+    "active": "groq",
     "ollama_model": "llama3:8b",
     "groq_model": "llama3-70b-8192",
     "openai_model": "gpt-4o"
