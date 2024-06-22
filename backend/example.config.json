@@ -1,6 +1,7 @@
 {
   "brain": {
     "ollama": {
+      "description": "You need to install Ollama by yourself and have it running.",
       "url": "http://localhost:11434",
       "keep_alive": "60m"
     },
@@ -13,9 +14,8 @@
   },
   "stt": {
     "whisper_local": {
-      "description": "tiny, base, small, medium, large-v3",
+      "description": "You need to download the model by yourself",
       "location": "E:/models/whisper/",
-      "model": "medium",
       "gpu": true,
       "language": "de"
     },
@@ -29,19 +29,20 @@
     }
   },
   "tts": {
+    "piper": {
+      "description": "You need to download the Model by yourself. Streaming for Piper is not implemented yet. So best for amount_input_sentences is 1",
+      "location": "E:/models/Piper",
+      "amount_input_sentences": 1
+    },
+    "xtts": {
+      "description": "You need to download the Model by yourself.",
+      "location": "E:/models/XTTS-v2",
+      "amount_input_sentences": 4
+    },
     "google": {
       "description": "For language: de, en, es-es, ...",
       "language": "de",
       "amount_input_sentences": 3
-    },
-    "xtts": {
-      "location": "E:/models/XTTS-v2",
-      "amount_input_sentences": 4
-    },
-    "piper": {
-      "location": "E:/models/Piper",
-      "description": "Streaming for Piper is not implemented yet. So best for amount_input_sentences is 1",
-      "amount_input_sentences": 1
     }
   }
 }

@@ -32,7 +32,7 @@ if 'lib' in current_dir:
     config_path = os.path.abspath(os.path.join(current_dir, "..", "..", "config.json"))
 
 
-with open(config_path, 'r') as f:
+with open(config_path, 'r', encoding='utf-8') as f:
     server_config = json.load(f)
         
 

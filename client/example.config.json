@@ -4,9 +4,7 @@
   },
   "recorder": {
     "description": "Stopword only works with headphones on. It is disabled for the moment. The int values are just for the real audio that should get translated to test not for the recognition of start word",
-    "startkey": "",
-    "stopkey": "",
-    "ambient_record_time": 0.5,
+    "ambient_record_time": 4,
     "pause_threshold": 1.5,
     "non_speaking_duration": 1.5
   },
@@ -14,24 +12,30 @@
     "description": "role_name: AI name in Chat, your_name: Your Name in Chat, role: Assignment of a role for the AI",
     "role_name": "Assistent",
     "your_name": "Marvin",
-    "role": "Du heißt Jarvis und sollst immer auf deutsch antworten. Deine Antworten werden mittels text to speech vorgelesen, sollen präzise sein und keine Sonderzeichen wie Sternchen oder Rauten enthalten."
+    "role": "Du heißt Jarvis und sollst immer auf deutsch antworten. Deine Antworten werden mittels text to speech vorgelesen und sollen keine Sonderzeichen wie Sternchen oder Rauten enthalten."
   },
   "openwakeword": {
+    "description": "In backend all openwakeword models are downloaded by itself inside the venv folder.",
     "model": "hey_jarvis_v0.1",
     "threshold": 0.7
   },
   "brain": {
-    "description": "common token lenghts: -1(unlimited, the entire text is sent to the model/api), 1024, 2048, 4096, 8192, 16384, ...",
-    "max_tokens": -1,
-    "active": "groq",
+    "description": "For openai it's important to set a limit, because it does not cut the input by itself or with high context models it gets expensive. Common token lenghts: -1(unlimited, the entire text is sent to the model/api), 1024, 2048, ...",
+    "max_input_tokens": -1,
+
+    "active": "ollama",
+    "description_ollama": "You have to download the model with ollama and put that model name in ollama_model.",
     "ollama_model": "llama3:8b",
     "groq_model": "llama3-70b-8192",
     "openai_model": "gpt-4o"
   },
   "stt": {
-    "active": "whisper_local"
+    "description": "whisper_local_model name needs to match with the path. For example: In backend config [stt][whisper_local][location] is set to E:/models/whisper/ than whisper_local_model will extend that path to E:/models/whisper/medium.",
+    "active": "whisper_local",
+    "whisper_local_model": "medium"
   },
   "tts": {
+    "description": "piper_voice or xtts_voice name needs to match with the path. For example: In backend config [tts][piper][location] is set to E:/models/Piper than piper_voice will extend that path to E:/models/Piper/default_german_voice.",
     "active": "piper",
     "piper_voice": "default_german_voice",
     "xtts_voice": "jarvis"

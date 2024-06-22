@@ -36,11 +36,11 @@ class Brain:
     def __check_max_tokens(self):
         if self.client_config["brain"]["max_input_tokens"] == -1:
             return
-        token_count = self.__count_tokens()   
-        if token_count > self.client_config["brain"]["max_input_tokens"]:
+        self.__count_new_tokens()   
+        if self.messages_tokens_sum > self.client_config["brain"]["max_input_tokens"]:
             self.__trim_messages()
             
-    def __count_tokens(self, model="gpt-3.5-turbo"):
+    def __count_new_tokens(self, model="gpt-3.5-turbo"):
         enc = tiktoken.encoding_for_model(model)
         # count tokens for last message and new user message.        
         last_message = self.messages[-2]["content"]
@@ -52,9 +52,7 @@ class Brain:
         
         self.messages_tokens.append(token_count_last)
         self.messages_tokens.append(token_count_newest)
-            
-        return self.messages_tokens_sum     
-    
+                
         
     def __trim_messages(self):
         while True:
