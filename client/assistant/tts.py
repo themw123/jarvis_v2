@@ -9,8 +9,8 @@ class Tts:
         self.websocket = None
         
     def connect(self):
-        self.websocket = create_connection(self.config["backend"]["websocket"]+"/tts")
-        
+        url = self.config["backend"]["api"].replace("http://", "ws://") 
+        self.websocket = create_connection(url+"/tts")
             
     def send(self, brain_text):
         for chunk in brain_text:

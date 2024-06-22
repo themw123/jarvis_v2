@@ -159,7 +159,8 @@ class Recorder:
 
     
     def connect(self):
-        self.websocket = create_connection(self.config["backend"]["websocket"]+"/wakeword")
+        url = self.config["backend"]["api"].replace("http://", "ws://")        
+        self.websocket = create_connection(url+"/wakeword")
         
         
     def listen_on_voice(self):

@@ -1,7 +1,6 @@
 {
   "backend": {
-    "api": "http://localhost:8000",
-    "websocket": "ws://localhost:8000"
+    "api": "http://localhost:8000"
   },
   "recorder": {
     "description": "Stopword only works with headphones on. It is disabled for the moment. The int values are just for the real audio that should get translated to test not for the recognition of start word",
