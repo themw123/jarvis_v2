@@ -28,8 +28,6 @@ def main():
         config = json.load(f)
         
     print("\n- start assistant...")
-    #startkey = config["recorder"]["startkey"]
-    #stopkey = config["recorder"]["stopkey"]
     startkey = "ctrl+space"
     stopkey = "ctrl+shift"
     keyword = config["openwakeword"]["model"].split('_v')[0]

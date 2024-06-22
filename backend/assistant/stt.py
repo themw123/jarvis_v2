@@ -19,7 +19,7 @@ class Stt:
             compute_type = "float16" if device == "cuda" else "int8"
             
             self.model = WhisperModel(
-                model_size_or_path=self.server_config["stt"]["whisper_local"]["location"] + self.server_config["stt"]["whisper_local"]["model"],
+                model_size_or_path=self.server_config["stt"]["whisper_local"]["location"] + self.client_config["stt"]["whisper_local_model"],
                 device=device,
                 compute_type=compute_type
             )

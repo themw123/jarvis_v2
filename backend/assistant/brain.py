@@ -11,6 +11,8 @@ class Brain:
         self.server_config = server_config
         self.client_config = client_config
         self.messages = [ {"role": "system", "content": self.client_config["chat"]["role"]} ]
+        self.messages_tokens = []
+        self.messages_tokens_sum = 0
         self.ollama = Ollama(server_config, client_config, self.messages)
         self.groq = GroqClass(server_config, client_config, self.messages)
         self.chatgpt = Chatgpt(server_config, client_config ,self.messages)
@@ -20,7 +22,7 @@ class Brain:
         self.messages.append(
             {"role": "user", "content": stt},
         )
-        self.__check_max_tokens(stt=stt)
+        self.__check_max_tokens()
         if self.client_config["brain"]["active"] == "ollama":
             return self.__stream_sentences_from_chunks(self.ollama.ask_wrapper())
         elif self.client_config["brain"]["active"] == "groq":
@@ -31,29 +33,41 @@ class Brain:
             raise Exception(self.client_config["brain"]["active"] + ": This brain type does not exist")
         
         
-    def __check_max_tokens(self, stt):
-        if self.client_config["brain"]["max_tokens"] == -1:
+    def __check_max_tokens(self):
+        if self.client_config["brain"]["max_input_tokens"] == -1:
             return
         token_count = self.__count_tokens()   
-        if token_count > self.client_config["brain"]["max_tokens"]:
+        if token_count > self.client_config["brain"]["max_input_tokens"]:
             self.__trim_messages()
             
     def __count_tokens(self, model="gpt-3.5-turbo"):
         enc = tiktoken.encoding_for_model(model)
-        token_count = 0
-        for message in self.messages:
-            token_count += len(enc.encode(message["content"])) 
-        return token_count     
+        # count tokens for last message and new user message.        
+        last_message = self.messages[-2]["content"]
+        newsest_message = self.messages[-1]["content"]
+                
+        token_count_last = len(enc.encode(last_message))
+        token_count_newest = len(enc.encode(newsest_message))
+        self.messages_tokens_sum += token_count_last + token_count_newest
+        
+        self.messages_tokens.append(token_count_last)
+        self.messages_tokens.append(token_count_newest)
+            
+        return self.messages_tokens_sum     
     
         
     def __trim_messages(self):
-        # Remove the oldest non-system messag
         while True:
-            token_count = self.__count_tokens()
-            if token_count <= self.client_config["brain"]["max_tokens"]:
+            if self.messages_tokens_sum <= self.client_config["brain"]["max_input_tokens"]:
                 break
-            del self.messages[1]    
-        
+
+            # remove first non system message
+            for i, message in enumerate(self.messages[1:], start=1):
+                self.messages.pop(i)
+                self.messages_tokens_sum -= self.messages_tokens[i]
+                self.messages_tokens.pop(i)
+                break
+                
     def __stream_sentences_from_chunks(self, chunks_stream):        
         #return/yield every x sententes
         buffer = ''
