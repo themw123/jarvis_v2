@@ -34,6 +34,10 @@ jobs:
           name: build-output-linux
           path: build/exe.*
 
+      - name: List build directory
+        run: |
+          ls -R build
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
