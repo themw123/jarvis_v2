@@ -3,7 +3,7 @@ from cx_Freeze import setup, Executable
 import sys
 sys.setrecursionlimit(5000)
 
-executables = [Executable("main.py", icon="img/ai.ico", target_name="assisstant")]
+executables = [Executable("client/main.py", icon="client/img/ai.ico", target_name="assisstant")]
 
 
 packages = ['pynput', 'Xlib'] if platform.system() != 'Windows' else ['pynput']
