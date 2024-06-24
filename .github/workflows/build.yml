@@ -44,13 +44,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}-${{ github.run_id }}
-          release_name: Release ${{ github.ref_name }}-${{ github.run_id }}
+          tag_name: client-linux-${{ format(github.event.pushed_at, 'YYYY-MM-DD') }}
+          release_name: Release client-linux-${{ format(github.event.pushed_at, 'YYYY-MM-DD') }}
           draft: false
           prerelease: false
 
       - name: Zip the build directory
-        run: zip -r build/linux-build.zip build/exe.linux-x86_64-3.11
+        run: zip -r build/linux-client.zip build/exe.linux-x86_64-3.11
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -58,6 +58,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/linux-build.zip
-          asset_name: linux-build.zip
+          asset_path: ./build/linux-client.zip
+          asset_name: linux-client.zip
           asset_content_type: application/zip
