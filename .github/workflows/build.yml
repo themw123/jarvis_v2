@@ -35,7 +35,7 @@ jobs:
           path: build/exe.*
 
       - name: set env
-        run: echo "NOW=$(date +'%Y.%d.%m')" >> $GITHUB_ENV
+        run: echo "NOW=$(date +'%d.%m.%Y')" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
@@ -43,7 +43,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.NOW }}
+          tag_name: linux-client-${{ env.NOW }}
           release_name: Release Client Linux
           draft: false
           prerelease: false
