@@ -34,8 +34,11 @@ jobs:
           path: build/exe.*
 
       - name: set env
-        run: echo "NOW=%date:~10,4%.%date:~4,2%.%date:~7,2%" >> $env:GITHUB_ENV
-        shell: cmd
+        run: |
+          $now = Get-Date -Format "dd.MM.yyyy"
+          echo "NOW=$now" >> $env:GITHUB_ENV
+          echo "Current NOW value: $env:NOW"
+        shell: pwsh
 
       - name: Debug env variables
         run: |
