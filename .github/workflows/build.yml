@@ -55,9 +55,9 @@ jobs:
           prerelease: false
 
       - name: Output release URL
-        run: echo "Release URL: ${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
+        run: echo "release_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
 
-  package-and-upload:
+  windows-client-package-and-upload:
     needs: [windows-client-build, windows-client-prepare-release]
     runs-on: windows-latest
     steps:
