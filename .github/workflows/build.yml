@@ -7,34 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  linux-client-build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.11.4"
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y portaudio19-dev python3-pyaudio
-          python -m pip install --upgrade pip
-          pip install -r client/requirements_linux.txt
-
-      - name: Build application
-        run: python client/setup.py build
-
-      - name: Archive build output
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-output-linux
-          path: build/exe.*
-
-  windows-client-build:
+  windows-backend-build:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -48,10 +21,10 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r client/requirements_windows.txt
+          pip install -r backend/requirements.txt
 
       - name: Build application
-        run: python client/setup.py build
+        run: python backend/setup.py build
         shell: cmd
 
       - name: Archive build output
@@ -61,7 +34,7 @@ jobs:
           path: build/exe.*
 
   prepare-release:
-    needs: [linux-client-build, windows-client-build]
+    needs: [windows-backend-build]
     runs-on: ubuntu-latest
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
@@ -76,37 +49,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: Release-${{ env.SHA }}
-          release_name: Release Client
+          release_name: Release Backend
           draft: false
           prerelease: false
 
       - name: Output release URL
         run: echo "release_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
 
-  linux-client-package-and-upload:
-    needs: [linux-client-build, prepare-release]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: build-output-linux
-
-      - name: Zip the build directory
-        run: zip -r linux-client.zip exe.linux-x86_64-3.11
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.prepare-release.outputs.release_url }}
-          asset_path: ./linux-client.zip
-          asset_name: linux-client.zip
-          asset_content_type: application/zip
-
-  windows-client-package-and-upload:
-    needs: [windows-client-build, prepare-release]
+  windows-backend-package-and-upload:
+    needs: [windows-backend-build, prepare-release]
     runs-on: windows-latest
     steps:
       - name: Download build artifact
@@ -115,7 +66,7 @@ jobs:
           name: build-output-windows
 
       - name: Zip the build directory
-        run: Compress-Archive -Path exe.win-amd64-3.11 -DestinationPath windows-client.zip
+        run: Compress-Archive -Path exe.win-amd64-3.11 -DestinationPath windows-backend.zip
         shell: pwsh
 
       - name: Upload Release Asset
@@ -124,6 +75,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.prepare-release.outputs.release_url }}
-          asset_path: ./windows-client.zip
-          asset_name: windows-client.zip
+          asset_path: ./windows-backend.zip
+          asset_name: windows-backend.zip
           asset_content_type: application/zip
