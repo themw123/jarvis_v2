@@ -91,7 +91,8 @@ jobs:
     steps:
       - name: Set release SHA
         run: |
-          $sha = "${{ github.sha }}.Substring(0, 7)"
+          $sha = "${{ github.sha }}"
+          $sha = $sha.Substring(0, 7)
           echo "SHA=$sha" >> $env:GITHUB_ENV
         shell: pwsh
 
