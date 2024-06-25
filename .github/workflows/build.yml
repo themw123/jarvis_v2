@@ -36,26 +36,28 @@ jobs:
   windows-client-prepare-release:
     needs: windows-client-build
     runs-on: windows-latest
+    outputs:
+      release_url: ${{ steps.create_windows_client_release.outputs.upload_url }}
     steps:
-      - name: Set release date
+      - name: Set release SHA
         run: |
-          $now = Get-Date -Format "ddMMyyyy-HHmmss"
-          echo "NOW=$now" >> $env:GITHUB_ENV
+          $sha = "${{ github.sha }}"
+          echo "SHA=$sha" >> $env:GITHUB_ENV
         shell: pwsh
 
       - name: Create Release
-        id: create_release
+        id: create_windows_client_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: windows-client-${{ env.NOW }}
+          tag_name: windows-client-${{ env.SHA }}
           release_name: Release Client Windows
           draft: false
           prerelease: false
 
       - name: Output release URL
-        run: echo "release_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
+        run: echo "release_url=${{ steps.create_windows_client_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
 
   windows-client-package-and-upload:
     needs: [windows-client-build, windows-client-prepare-release]
@@ -75,7 +77,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_windows_client_release.outputs.upload_url }}
           asset_path: ./windows-client.zip
           asset_name: windows-client.zip
           asset_content_type: application/zip
