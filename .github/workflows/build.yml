@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-linux:
+  build-windwos-client:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -19,23 +19,23 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y portaudio19-dev python3-pyaudio
           python -m pip install --upgrade pip
-          pip install -r client/requirements_linux.txt
+          pip install -r client/requirements_windows.txt
 
       - name: Build application
         run: |
           python client/setup.py build
+        shell: cmd
 
       - name: Archive build output
         uses: actions/upload-artifact@v2
         with:
-          name: build-output-linux
+          name: build-output-windows
           path: build/exe.*
 
       - name: set env
-        run: echo "NOW=$(date +'%d.%m.%Y')" >> $GITHUB_ENV
+        run: echo "NOW=%date:~10,4%.%date:~4,2%.%date:~7,2%" >> %GITHUB_ENV%
+        shell: cmd
 
       - name: Create Release
         id: create_release
@@ -43,13 +43,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: linux-client-${{ env.NOW }}
-          release_name: Release Client Linux
+          tag_name: windows-client-${{ env.NOW }}
+          release_name: Release Client Windows
           draft: false
           prerelease: false
 
       - name: Zip the build directory
-        run: zip -r build/linux-client.zip build/exe.linux-x86_64-3.11
+        #run: zip -r build/linux-client.zip build/exe.linux-x86_64-3.11
+        run: Compress-Archive -Path build/exe.win-amd64-3.11 -DestinationPath build/windows-client.zip
+        shell: pwsh
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -57,6 +59,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/linux-client.zip
-          asset_name: linux-client.zip
+          asset_path: ./build/windows-client.zip
+          asset_name: windows-client.zip
           asset_content_type: application/zip
