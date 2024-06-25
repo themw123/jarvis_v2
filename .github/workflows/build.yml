@@ -60,7 +60,6 @@ jobs:
           name: build-output-windows
           path: build/exe.*
 
-  linux-client-prepare-release:
     needs: linux-client-build
     runs-on: ubuntu-latest
     outputs:
@@ -83,7 +82,24 @@ jobs:
       - name: Output release URL
         run: echo "release_url=${{ steps.create_linux_client_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
 
-  windows-client-prepare-release:
+  prepare-release:
+    needs: [linux-client-build, windows-client-build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set release SHA
+        run: echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: Release-${{ env.SHA }}
+          release_name: Release Client
+          draft: false
+          prerelease: false
+
     needs: windows-client-build
     runs-on: windows-latest
     outputs:
@@ -111,7 +127,7 @@ jobs:
         run: echo "release_url=${{ steps.create_windows_client_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
 
   linux-client-package-and-upload:
-    needs: [linux-client-build, linux-client-prepare-release]
+    needs: [linux-client-build, prepare-release]
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifact
@@ -127,13 +143,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.linux-client-prepare-release.outputs.release_url }}
+          upload_url: ${{ needs.prepare-release.outputs.release_url }}
           asset_path: ./linux-client.zip
           asset_name: linux-client.zip
           asset_content_type: application/zip
 
   windows-client-package-and-upload:
-    needs: [windows-client-build, windows-client-prepare-release]
+    needs: [windows-client-build, prepare-release]
     runs-on: windows-latest
     steps:
       - name: Download build artifact
@@ -150,7 +166,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.windows-client-prepare-release.outputs.release_url }}
+          upload_url: ${{ needs.prepare-release.outputs.release_url }}
           asset_path: ./windows-client.zip
           asset_name: windows-client.zip
           asset_content_type: application/zip
