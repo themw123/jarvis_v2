@@ -1,4 +1,5 @@
-name: Build
+name: Build and Release
+
 on:
   push:
     branches:
@@ -6,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-windwos-client:
+  windows-client-build:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -23,8 +24,7 @@ jobs:
           pip install -r client/requirements_windows.txt
 
       - name: Build application
-        run: |
-          python client/setup.py build
+        run: python client/setup.py build
         shell: cmd
 
       - name: Archive build output
@@ -33,16 +33,14 @@ jobs:
           name: build-output-windows
           path: build/exe.*
 
-      - name: set env
+  windows-client-prepare-release:
+    needs: windows-client-build
+    runs-on: windows-latest
+    steps:
+      - name: Set release date
         run: |
           $now = Get-Date -Format "dd.MM.yyyy"
           echo "NOW=$now" >> $env:GITHUB_ENV
-          echo "Current NOW value: $env:NOW"
-        shell: pwsh
-
-      - name: Debug env variables
-        run: |
-          echo "!!!!!!!!NOW=${{ env.NOW }}"
         shell: pwsh
 
       - name: Create Release
@@ -56,9 +54,20 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Output release URL
+        run: echo "Release URL: ${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
+
+  package-and-upload:
+    needs: [windows-client-build, windows-client-prepare-release]
+    runs-on: windows-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-output-windows
+
       - name: Zip the build directory
-        #run: zip -r build/linux-client.zip build/exe.linux-x86_64-3.11
-        run: Compress-Archive -Path build/exe.win-amd64-3.11 -DestinationPath build/windows-client.zip
+        run: Compress-Archive -Path exe.win-amd64-3.11 -DestinationPath windows-client.zip
         shell: pwsh
 
       - name: Upload Release Asset
@@ -66,7 +75,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/windows-client.zip
+          upload_url: ${{ needs.prepare-release.outputs.release_url }}
+          asset_path: ./windows-client.zip
           asset_name: windows-client.zip
           asset_content_type: application/zip
