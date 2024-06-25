@@ -80,9 +80,6 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Output release URL
-        run: echo "release_url=${{ steps.prepare-release.outputs.upload_url }}" >> $GITHUB_OUTPUT
-
   linux-client-package-and-upload:
     needs: [linux-client-build, prepare-release]
     runs-on: ubuntu-latest
