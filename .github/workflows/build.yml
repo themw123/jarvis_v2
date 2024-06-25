@@ -34,7 +34,7 @@ jobs:
           path: build/exe.*
 
       - name: set env
-        run: echo "NOW=%date:~10,4%.%date:~4,2%.%date:~7,2%" >> %GITHUB_ENV%
+        run: echo "NOW=%date:~7,2%-%date:~4,2%-%date:~10,4%" >> %GITHUB_ENV%
         shell: cmd
 
       - name: Create Release
