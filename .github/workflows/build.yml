@@ -39,7 +39,7 @@ jobs:
     steps:
       - name: Set release date
         run: |
-          $now = Get-Date -Format "dd.MM.yyyy"
+          $now = Get-Date -Format "dd.MM.yyyy HH:mm:ss"
           echo "NOW=$now" >> $env:GITHUB_ENV
         shell: pwsh
 
