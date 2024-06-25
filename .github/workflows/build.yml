@@ -20,7 +20,7 @@ jobs:
 
       - name: Ausgabe des aktuellen Verzeichnisinhalts
         run: |
-          cd client
+          cd backend
           echo "Aktuelles Verzeichnis: $(pwd)"
           echo "Inhalt des aktuellen Verzeichnisses:"
           ls -la
