@@ -18,6 +18,10 @@ jobs:
         with:
           python-version: "3.11.4"
 
+      - name: Print current directory
+        run: echo "Current directory: $(pwd)"
+        shell: bash
+        
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
