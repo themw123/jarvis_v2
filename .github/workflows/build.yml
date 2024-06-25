@@ -60,31 +60,11 @@ jobs:
           name: build-output-windows
           path: build/exe.*
 
-    needs: linux-client-build
-    runs-on: ubuntu-latest
-    outputs:
-      release_url: ${{ steps.create_linux_client_release.outputs.upload_url }}
-    steps:
-      - name: Set release SHA
-        run: echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
-
-      - name: Create Release
-        id: create_linux_client_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: linux-client-${{ env.SHA }}
-          release_name: Release Client Linux
-          draft: false
-          prerelease: false
-
-      - name: Output release URL
-        run: echo "release_url=${{ steps.create_linux_client_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
-
   prepare-release:
     needs: [linux-client-build, windows-client-build]
     runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: Set release SHA
         run: echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
@@ -100,31 +80,8 @@ jobs:
           draft: false
           prerelease: false
 
-    needs: windows-client-build
-    runs-on: windows-latest
-    outputs:
-      release_url: ${{ steps.create_windows_client_release.outputs.upload_url }}
-    steps:
-      - name: Set release SHA
-        run: |
-          $sha = "${{ github.sha }}"
-          $sha = $sha.Substring(0, 7)
-          echo "SHA=$sha" >> $env:GITHUB_ENV
-        shell: pwsh
-
-      - name: Create Release
-        id: create_windows_client_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: windows-client-${{ env.SHA }}
-          release_name: Release Client Windows
-          draft: false
-          prerelease: false
-
       - name: Output release URL
-        run: echo "release_url=${{ steps.create_windows_client_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
+        run: echo "release_url=${{ steps.prepare-release.outputs.upload_url }}" >> $GITHUB_OUTPUT
 
   linux-client-package-and-upload:
     needs: [linux-client-build, prepare-release]
