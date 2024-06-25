@@ -18,8 +18,11 @@ jobs:
         with:
           python-version: "3.11.4"
 
-      - name: Print current directory
-        run: echo "$(pwd)"
+      - name: Ausgabe des aktuellen Verzeichnisinhalts
+        run: |
+          echo "Aktuelles Verzeichnis: $(pwd)"
+          echo "Inhalt des aktuellen Verzeichnisses:"
+          ls -la
         shell: bash
 
       - name: Install dependencies
