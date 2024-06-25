@@ -64,7 +64,7 @@ jobs:
     needs: [linux-client-build, windows-client-build]
     runs-on: ubuntu-latest
     outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: Set release SHA
         run: echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
@@ -79,6 +79,9 @@ jobs:
           release_name: Release Client
           draft: false
           prerelease: false
+
+      - name: Output release URL
+        run: echo "release_url=${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_OUTPUT
 
   linux-client-package-and-upload:
     needs: [linux-client-build, prepare-release]
