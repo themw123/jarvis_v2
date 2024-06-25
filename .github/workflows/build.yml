@@ -20,9 +20,10 @@ jobs:
 
       - name: Ausgabe des aktuellen Verzeichnisinhalts
         run: |
+          cd client
           echo "Aktuelles Verzeichnis: $(pwd)"
           echo "Inhalt des aktuellen Verzeichnisses:"
-          ls -la ./client
+          ls -la
         shell: bash
 
       - name: Install dependencies
