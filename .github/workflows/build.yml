@@ -22,7 +22,7 @@ jobs:
         run: |
           echo "Aktuelles Verzeichnis: $(pwd)"
           echo "Inhalt des aktuellen Verzeichnisses:"
-          ls -la
+          ls -la ./client
         shell: bash
 
       - name: Install dependencies
