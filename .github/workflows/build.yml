@@ -71,7 +71,6 @@ jobs:
           name: build-output-linux
 
       - name: Zip the build directory
-        run: Compress-Archive -Path exe.win-amd64-3.11 -DestinationPath linux-client.zip
         run: zip -r linux-client.zip exe.linux-x86_64-3.11
         shell: pwsh
 
