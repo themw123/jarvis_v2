@@ -41,9 +41,7 @@ jobs:
       release_url: ${{ steps.create_linux_client_release.outputs.upload_url }}
     steps:
       - name: Set release SHA
-        run: |
-          $sha = "${{ github.sha }}"
-          echo "SHA=$sha" >> $env:GITHUB_ENV
+        run: echo "COMMIT_SHA=${GITHUB_SHA}" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_linux_client_release
