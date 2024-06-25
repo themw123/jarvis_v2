@@ -32,7 +32,9 @@ jobs:
           pip install -r backend/requirements.txt
 
       - name: Build application
-        run: python backend/setup.py build
+        run: |
+          cd backend
+          python setup.py build
         shell: cmd
 
       - name: Archive build output
