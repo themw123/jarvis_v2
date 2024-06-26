@@ -49,7 +49,6 @@ jobs:
         with:
           name: build-output-windows
           path: backend/build/
-        shell: cmd
 
   prepare-release:
     needs: [windows-backend-build]
