@@ -28,19 +28,19 @@
 
 - rename example.config.json to config.json and adjust the variables to your needs.
 
-- remove "torch", "torchvision" and "deepspeed @ file://.." from requirements.txt
 - run the following commands to init dependencies:
 
   - for virtual environment: `python -m venv venv`
 
   - to activate and use the environment: `.\venv\Scripts\activate`
 
+  - adjust torch and torchvision in requirements.txt. /cu121 if you installed cuda 12 or use /cu118 if you installed cuda 11:
+
+    ```
+    torch==2.2.1 --index-url https://download.pytorch.org/whl/cu121
+    torchvision --index-url https://download.pytorch.org/whl/cu121
+    ```
+
   - install dependencies `pip install -r requirements.txt`
-
-  - install deepspeed: `pip install deepspeed-0.14.0+ce78a63-cp311-cp311-win_amd64.whl`
-
-  - use /cu121 if you installed cuda 12 or use /cu118 if you installed cuda 11:
-    `pip install torch==2.2.1 torchvision --index-url 
-https://download.pytorch.org/whl/cu121`
 
   - change transformers version(bug): `pip install transformers==4.40.1`
