@@ -107,7 +107,7 @@ class Updater:
         os.rmdir(subdir_path)        
         os.rename(os.path.join(current_dir, "example.config.json"), os.path.join(current_dir, "config.json"))
         
-        self.config["version"] = self.sha
+        self.config["version"] = str(self.sha)
         with open(os.path.join(current_dir, "config.json"), "w", encoding="utf-8") as file:
             json.dump(self.config, file, indent=4, ensure_ascii=False)      
        
