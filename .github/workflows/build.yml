@@ -41,14 +41,15 @@ jobs:
         shell: cmd
 
       - name: Inhalt des Build-Ordners ausgeben
-        run: dir build\
+        run: dir
         shell: cmd
 
       - name: Archive build output
         uses: actions/upload-artifact@v2
         with:
           name: build-output-windows
-          path: build\
+          path: backend/build/
+        shell: cmd
 
   prepare-release:
     needs: [windows-backend-build]

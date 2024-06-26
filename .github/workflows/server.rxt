@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-output-windows
-          path: build\
+          path: build/
 
   prepare-release:
     needs: [linux-client-build, windows-client-build]
