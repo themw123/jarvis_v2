@@ -58,7 +58,8 @@ jobs:
         shell: cmd
 
       - name: Inhalt des Build-Ordners ausgeben
-        run: ls -la build/
+        run: dir build/
+        shell: cmd
 
       - name: Archive build output
         uses: actions/upload-artifact@v2
