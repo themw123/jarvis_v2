@@ -61,7 +61,7 @@ jobs:
           path: build/
 
   prepare-release:
-    needs: [linux-client-build, windows-client-build, windows-backend-build]
+    needs: [linux-client-build]
     runs-on: ubuntu-latest
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
