@@ -58,7 +58,7 @@ jobs:
         shell: cmd
 
       - name: Inhalt des Build-Ordners ausgeben
-        run: dir build/
+        run: dir build\
         shell: cmd
 
       - name: Archive build output
