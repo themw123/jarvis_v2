@@ -18,12 +18,14 @@ jobs:
         with:
           python-version: "3.11.4"
 
-      - name: Ausgabe des aktuellen Verzeichnisinhalts
+      - name: Ausgabe des aktuellen Verzeichnisinhalts und Pfadüberprüfung
         run: |
           cd backend
           echo "Aktuelles Verzeichnis: $(pwd)"
           echo "Inhalt des aktuellen Verzeichnisses:"
           ls -la
+          echo "Inhalt des backend Verzeichnisses:"
+          ls -la backend
         shell: bash
 
       - name: Install dependencies
