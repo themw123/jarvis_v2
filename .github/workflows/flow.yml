@@ -26,38 +26,14 @@ jobs:
           pip install -r client/requirements_linux.txt
 
       - name: Build application
-        run: python client/setup.py build
+        run: |
+          cd client
+          python setup.py build
 
       - name: Archive build output
         uses: actions/upload-artifact@v2
         with:
           name: build-output-linux
-          path: build/
-
-  windows-client-build:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.11.4"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r client/requirements_windows.txt
-
-      - name: Build application
-        run: python client/setup.py build
-        shell: cmd
-
-      - name: Archive build output
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-output-windows
           path: build/
 
   prepare-release:
