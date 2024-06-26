@@ -1,6 +1,7 @@
 #contextlib um "hello from the pygame community" zu entfernen
 import contextlib
 import os
+import sys
 import time
 
 from assistant.lifecircle import Lifecircle
@@ -18,7 +19,11 @@ class Player:
     current_dir = os.path.dirname(os.path.realpath(__file__))
     parent_dir = os.path.dirname(current_dir)
     sound_path = os.path.join(parent_dir, "sound")
-    if 'lib' in current_dir:
+    
+    program_name = sys.argv[0]
+    extension = os.path.splitext(program_name)[1]
+
+    if extension != ".py":
         sound_path = os.path.abspath(os.path.join(parent_dir, "..", "sound"))
 
     def __init__(self, config):

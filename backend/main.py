@@ -1,5 +1,6 @@
 
 import os
+import sys
 import uvicorn
 import json
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
@@ -28,7 +29,10 @@ tts: Tts = None
 current_dir = os.path.dirname(os.path.realpath(__file__))
 config_path = os.path.join(current_dir, "config.json")
 
-if 'lib' in current_dir:
+program_name = sys.argv[0]
+extension = os.path.splitext(program_name)[1]
+
+if extension != ".py":
     config_path = os.path.abspath(os.path.join(current_dir, "..", "..", "config.json"))
 
 

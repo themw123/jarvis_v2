@@ -1,6 +1,7 @@
 {
+  "version": "xxx",
   "backend": {
-    "api": "http://localhost:8000"
+    "api": "http://192.168.178.23:8000"
   },
   "recorder": {
     "description": "Stopword only works with headphones on. It is disabled for the moment. The int values are just for the real audio that should get translated to test not for the recognition of start word",
@@ -23,7 +24,7 @@
     "description": "For openai it's important to set a limit, because it does not cut the input by itself or with high context models it gets expensive. Common token lenghts: -1(unlimited, the entire text is sent to the model/api), 1024, 2048, ...",
     "max_input_tokens": -1,
 
-    "active": "ollama",
+    "active": "groq",
     "description_ollama": "You have to download the model with ollama and put that model name in ollama_model.",
     "ollama_model": "llama3:8b",
     "groq_model": "llama3-70b-8192",

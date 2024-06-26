@@ -3,6 +3,7 @@ import pickle
 import platform
 import queue
 import subprocess
+import sys
 import tempfile
 
 import wave
@@ -49,7 +50,11 @@ class Tts:
         try:
             current_dir = os.path.dirname(os.path.realpath(__file__))
             temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "temp_audio"))
-            if 'lib' in current_dir:
+            
+            program_name = sys.argv[0]
+            extension = os.path.splitext(program_name)[1]
+
+            if extension != ".py":
                 temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "..","temp_audio"))
             files = os.listdir(temp_audio_path) 
             for file in files:
@@ -129,7 +134,11 @@ class Tts:
         
         current_dir = os.path.dirname(__file__)
         temp_audio_path = os.path.abspath(os.path.join(current_dir,"..", "temp_audio"))
-        if 'build' in current_dir:
+        
+        program_name = sys.argv[0]
+        extension = os.path.splitext(program_name)[1]
+
+        if extension == ".exe":               
             temp_audio_path = os.path.abspath(os.path.join(current_dir, "..", "..", "temp_audio"))
 
         output_file = tempfile.NamedTemporaryFile(delete=False, dir=temp_audio_path, suffix=".wav")

@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import threading
 import colorama
 import requests
@@ -13,6 +14,7 @@ from assistant.player import Player
 from assistant.recorder import Recorder
 from assistant.tts import Tts
 from assistant.stt import Stt
+from update.updater import Updater
 
 
 def main():
@@ -21,11 +23,18 @@ def main():
     current_dir = os.path.dirname(os.path.realpath(__file__))
     config_path = os.path.join(current_dir, "config.json")
 
-    if 'lib' in current_dir:
+    program_name = sys.argv[0]
+    extension = os.path.splitext(program_name)[1]
+
+    if extension != ".py":
         config_path = os.path.abspath(os.path.join(current_dir, "..", "..", "config.json"))
 
     with open(config_path, 'r', encoding='utf-8') as f:
         config = json.load(f)
+        
+    print("\n- checking for updates...")    
+    updater = Updater(config)
+    updater.run()
         
     print("\n- start assistant...")
     startkey = "ctrl+space"
