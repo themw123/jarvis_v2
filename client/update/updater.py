@@ -23,6 +23,8 @@ class Updater:
             old_dir = sys.argv[1]
             shutil.rmtree(old_dir)
             return
+        else:
+            print("\n- checking for updates...")
             
         update_url = self.check_for_update()
         if update_url:
@@ -46,12 +48,9 @@ class Updater:
             return None
 
     def download_update(self, download_url):
-        os_type = platform.system()
         name = "exe.linux-x86_64-3.11_" + str(self.sha)
+        os_type = platform.system()
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        
-        #testing on linux only
-        #old_dir = "/home/marvin/code/private/jarvis_v2/client/build/test"
         
         current_dir = os.path.abspath(os.path.join(current_dir, ".."))
         
@@ -59,7 +58,7 @@ class Updater:
         extension = os.path.splitext(program_name)[1]
 
         if extension != ".py":
-            old_dir = os.path.basename(os.path.dirname(os.path.dirname(current_dir)))
+            old_dir = os.path.abspath(os.path.join(current_dir, ".."))
             current_dir = os.path.abspath(os.path.join(current_dir, "..", "..", name))
         else:
             current_dir = os.path.abspath(os.path.join(current_dir, "build", name))
@@ -132,10 +131,10 @@ class Updater:
             emulators = "gnome-terminal"
             cmd = [emulators, "--", updated_client, old_dir]
             subprocess.Popen(cmd)
-            
             sys.exit()
+
         else:
-            print("\n- unsupported os")
+            print("\n- unsupported os. Please open the new client manually and delete the old one.")
             sys.exit()
         
         

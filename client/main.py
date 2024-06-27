@@ -32,7 +32,6 @@ def main():
     with open(config_path, 'r', encoding='utf-8') as f:
         config = json.load(f)
         
-    print("\n- checking for updates...")    
     updater = Updater(config)
     updater.run()
         
