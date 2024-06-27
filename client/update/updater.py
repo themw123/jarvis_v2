@@ -21,13 +21,18 @@ class Updater:
     def run(self):
         if self.os_type not in ['Windows', 'Linux']:
             print("\n- unsupported os. Only Windows and Linux are supported. Leaving updater...")
+            return
         if self.extension == ".py":
-            print("\n- You are in dev mode. Leaving updater.")
+            print("\n- You are in dev mode. Leaving updater...")
             return
         if len(sys.argv) > 1:
-            print("\n- deleting old version...")
-            old_dir = sys.argv[1]
-            shutil.rmtree(old_dir)
+            try:
+                print("\n- deleting old version...")
+                old_dir = sys.argv[1]
+                shutil.rmtree(old_dir)
+            except Exception as e:
+                print("\n- Could not delete folder of old version, because the terminal of the previous version is still open. Delete it by yourself.")
+                return
             return
         else:
             print("\n- checking for updates...")
@@ -46,7 +51,17 @@ class Updater:
             self.sha = latest_release['tag_name'].replace("Release-", "")
             if self.sha != self.config["version"]:
                 print(f"\n- update available with sha: {self.sha}")
-                return latest_release['assets'][0]['browser_download_url']
+                
+                if self.os_type == "Windows":
+                    client = "windows-client.zip"
+                elif self.os_type == "Linux":
+                    client = "linux-client.zip"
+                
+                for asset in latest_release['assets']:
+                    if asset['name'] == client:
+                        return asset['browser_download_url']
+                print("\n- Could not find a release. Leaving updater...")
+                return
             else:
                 return None
         except Exception as e:
@@ -54,8 +69,11 @@ class Updater:
             return None
 
     def download_update(self, download_url):
-        
-        name = "exe.linux-x86_64-3.11_" + str(self.sha)
+        if self.os_type == "Windows":
+            name = "exe.win-amd64-3.11_" + str(self.sha)
+        elif self.os_type == "Linux":
+            name = "exe.linux-x86_64-3.11_" + str(self.sha)
+            
         current_dir = os.path.dirname(os.path.realpath(__file__))
         
         #current_dir = os.path.abspath(os.path.join(current_dir, ".."))
@@ -123,7 +141,8 @@ class Updater:
         print("\n- restarting with new version ...")
         time.sleep(2)
         if self.os_type == "Windows":
-            updated_client = os.path.join(update_file, 'assisstant.exe')
+            updated_client = os.path.join(current_dir, 'assisstant.exe')
+            print(old_dir)
             subprocess.Popen([updated_client, old_dir], creationflags=subprocess.CREATE_NEW_CONSOLE)
             sys.exit()
         elif self.os_type == "Linux":
