@@ -7,7 +7,9 @@ import sys
 import time
 import zipfile
 import requests
-
+import zipfile
+#Do not remove this import, it is needed for cx_freeze to work correctly
+import encodings.cp437 
 
 class Updater:
     
@@ -49,7 +51,7 @@ class Updater:
         current_dir = os.path.dirname(os.path.realpath(__file__))
         
         #testing on linux only
-        old_dir = "/home/marvin/code/private/jarvis_v2/client/build/test"
+        #old_dir = "/home/marvin/code/private/jarvis_v2/client/build/test"
         
         current_dir = os.path.abspath(os.path.join(current_dir, ".."))
         
@@ -58,7 +60,7 @@ class Updater:
 
         if extension != ".py":
             old_dir = os.path.basename(os.path.dirname(os.path.dirname(current_dir)))
-            current_dir = os.path.abspath(os.path.join(current_dir, "..", ".."))
+            current_dir = os.path.abspath(os.path.join(current_dir, "..", "..", name))
         else:
             current_dir = os.path.abspath(os.path.join(current_dir, "build", name))
         os.makedirs(current_dir, exist_ok=True)
@@ -84,9 +86,9 @@ class Updater:
         print("\n\n- download complete")
     
         print("\n- extracting update...")
-        
         with zipfile.ZipFile(update_file, 'r') as zip_ref:
-            zip_ref.extractall(current_dir)
+            for file in zip_ref.namelist():
+                zip_ref.extract(file, path=current_dir)
         print("\n- update extracted")       
         
         
@@ -116,8 +118,8 @@ class Updater:
         time.sleep(2)
 
         
-        #if extension == ".py":
-        #    sys.exit() 
+        if extension == ".py":
+            sys.exit() 
             
         print("\n- restarting with new version ...")
         time.sleep(2)
@@ -126,9 +128,7 @@ class Updater:
             subprocess.Popen([updated_client, old_dir], creationflags=subprocess.CREATE_NEW_CONSOLE)
             sys.exit()
         elif os_type == "Linux":
-            #updated_client = os.path.join(current_dir, 'assisstant')
-            updated_client = os.path.join(os.path.dirname(current_dir), 'new', 'assisstant')
-            #subprocess.Popen(["gnome-terminal", "--", "python3", updated_client], cwd=old_dir)
+            updated_client = os.path.join(current_dir, 'assisstant')
             emulators = "gnome-terminal"
             cmd = [emulators, "--", updated_client, old_dir]
             subprocess.Popen(cmd)
