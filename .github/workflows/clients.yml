@@ -56,7 +56,7 @@ jobs:
         run: |
           cd client
           python setup.py build
-          shell: cmd
+        shell: cmd
 
       - name: Archive build output
         uses: actions/upload-artifact@v2

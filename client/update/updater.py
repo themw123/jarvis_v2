@@ -17,8 +17,10 @@ class Updater:
         self.config = config
         self.sha = None
         self.extension = os.path.splitext(sys.argv[0])[1]
-
+        self.os_type = platform.system()
     def run(self):
+        if self.os_type not in ['Windows', 'Linux']:
+            print("\n- unsupported os. Only Windows and Linux are supported. Leaving updater...")
         if self.extension == ".py":
             print("\n- You are in dev mode. Leaving updater.")
             return
@@ -54,7 +56,6 @@ class Updater:
     def download_update(self, download_url):
         
         name = "exe.linux-x86_64-3.11_" + str(self.sha)
-        os_type = platform.system()
         current_dir = os.path.dirname(os.path.realpath(__file__))
         
         #current_dir = os.path.abspath(os.path.join(current_dir, ".."))
@@ -103,7 +104,7 @@ class Updater:
             item_path = os.path.join(subdir_path, item)
             shutil.move(item_path, current_dir)
 
-        if os_type == "Linux":
+        if self.os_type == "Linux":
             assisstant_path_linux = os.path.join(current_dir, 'assisstant')
             os.chmod(assisstant_path_linux, 0o755)
         
@@ -121,20 +122,17 @@ class Updater:
             
         print("\n- restarting with new version ...")
         time.sleep(2)
-        if os_type == "Windows":
+        if self.os_type == "Windows":
             updated_client = os.path.join(update_file, 'assisstant.exe')
             subprocess.Popen([updated_client, old_dir], creationflags=subprocess.CREATE_NEW_CONSOLE)
             sys.exit()
-        elif os_type == "Linux":
+        elif self.os_type == "Linux":
             updated_client = os.path.join(current_dir, 'assisstant')
             emulators = "gnome-terminal"
             cmd = [emulators, "--", updated_client, old_dir]
             subprocess.Popen(cmd)
             sys.exit()
 
-        else:
-            print("\n- unsupported os. Please open the new client manually and delete the old one.")
-            sys.exit()
         
         
             
