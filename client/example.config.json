@@ -1,5 +1,6 @@
 {
-  "version": "xxx",
+  "description": "Do not change version, leave it as it is.",
+  "version": "0",
   "backend": {
     "api": "http://192.168.178.23:8000"
   },
