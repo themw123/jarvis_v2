@@ -35,7 +35,7 @@ class Updater:
         try:
             response = requests.get(api_url)
             latest_release = response.json()
-            self.sha = latest_release['id']
+            self.sha = latest_release['tag_name'].replace("Release-", "")
             if self.sha != self.config["version"]:
                 print(f"\n- update available with sha: {self.sha}")
                 return latest_release['assets'][0]['browser_download_url']
