@@ -16,8 +16,12 @@ class Updater:
     def __init__(self, config):
         self.config = config
         self.sha = None
+        self.extension = os.path.splitext(sys.argv[0])[1]
 
     def run(self):
+        if self.extension == ".py":
+            print("\n- You are in dev mode. Leaving updater.")
+            return
         if len(sys.argv) > 1:
             print("\n- deleting old version...")
             old_dir = sys.argv[1]
@@ -48,20 +52,19 @@ class Updater:
             return None
 
     def download_update(self, download_url):
+        
         name = "exe.linux-x86_64-3.11_" + str(self.sha)
         os_type = platform.system()
         current_dir = os.path.dirname(os.path.realpath(__file__))
         
-        current_dir = os.path.abspath(os.path.join(current_dir, ".."))
+        #current_dir = os.path.abspath(os.path.join(current_dir, ".."))
         
-        program_name = sys.argv[0]
-        extension = os.path.splitext(program_name)[1]
 
-        if extension != ".py":
-            old_dir = os.path.abspath(os.path.join(current_dir, ".."))
-            current_dir = os.path.abspath(os.path.join(current_dir, "..", "..", name))
+        if self.extension != ".py":
+            old_dir = os.path.abspath(os.path.join(current_dir, "..", ".."))
+            current_dir = os.path.abspath(os.path.join(current_dir, "..", "..", "..", name))
         else:
-            current_dir = os.path.abspath(os.path.join(current_dir, "build", name))
+            current_dir = os.path.abspath(os.path.join(current_dir, "..", "build", name))
         os.makedirs(current_dir, exist_ok=True)
         
         #delete everything to be sure
@@ -115,10 +118,6 @@ class Updater:
         
         print("\n- update complete.")
         time.sleep(2)
-
-        
-        if extension == ".py":
-            sys.exit() 
             
         print("\n- restarting with new version ...")
         time.sleep(2)
