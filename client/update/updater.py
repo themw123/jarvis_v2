@@ -23,15 +23,16 @@ class Updater:
             print("\n- unsupported os. Only Windows and Linux are supported. Leaving updater...")
             return
         if self.extension == ".py":
-            print("\n- You are in dev mode. Leaving updater...")
+            print("\n- you are in dev mode. Leaving updater...")
             return
         if len(sys.argv) > 1:
             try:
                 print("\n- deleting old version...")
+                print("\n- your old config.json was overwritten by the new one. Adjust the new one if necessary.")
                 old_dir = sys.argv[1]
                 shutil.rmtree(old_dir)
             except Exception as e:
-                print("\n- Could not delete folder of old version, because the terminal of the previous version is still open. Delete it by yourself.")
+                print("\n- Could not delete folder of old version, because the terminal of the previous version is still open. Delete it by yourself. Path:", old_dir)
                 return
             return
         else:
@@ -60,12 +61,12 @@ class Updater:
                 for asset in latest_release['assets']:
                     if asset['name'] == client:
                         return asset['browser_download_url']
-                print("\n- Could not find a release. Leaving updater...")
+                print("\n- could not find a release. Leaving updater...")
                 return
             else:
                 return None
         except Exception as e:
-            print(f"Error in checking for updates: {e}")
+            print(f"error in checking for updates: {e}")
             return None
 
     def download_update(self, download_url):
@@ -133,16 +134,16 @@ class Updater:
         self.config["version"] = str(self.sha)
         with open(os.path.join(current_dir, "config.json"), "w", encoding="utf-8") as file:
             json.dump(self.config, file, indent=4, ensure_ascii=False)      
-       
+
         
         print("\n- update complete.")
         time.sleep(2)
             
-        print("\n- restarting with new version ...")
+        print("\n- starting new version ...")
+        
         time.sleep(2)
         if self.os_type == "Windows":
             updated_client = os.path.join(current_dir, 'assisstant.exe')
-            print(old_dir)
             subprocess.Popen([updated_client, old_dir], creationflags=subprocess.CREATE_NEW_CONSOLE)
             sys.exit()
         elif self.os_type == "Linux":
@@ -151,6 +152,7 @@ class Updater:
             cmd = [emulators, "--", updated_client, old_dir]
             subprocess.Popen(cmd)
             sys.exit()
+        print("\n- you can close the current window.")
 
         
         
