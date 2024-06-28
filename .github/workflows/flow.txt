@@ -53,14 +53,16 @@ jobs:
           pip install -r client/requirements_windows.txt
 
       - name: Build application
-        run: python client/setup.py build
+        run: |
+          cd client
+          python setup.py build
         shell: cmd
 
       - name: Archive build output
         uses: actions/upload-artifact@v2
         with:
-          name: build-output-windows
-          path: build/
+          name: build-output-windows-client
+          path: client/build/
 
   windows-backend-build:
     runs-on: windows-latest
@@ -90,7 +92,7 @@ jobs:
       - name: Archive build output
         uses: actions/upload-artifact@v2
         with:
-          name: build-output-windows
+          name: build-output-windows-backend
           path: backend/build/
 
   prepare-release:
@@ -145,7 +147,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-output-windows
+          name: build-output-windows-client
 
       - name: Zip the build directory
         run: Compress-Archive -Path exe.win-amd64-3.11 -DestinationPath windows-client.zip
@@ -168,7 +170,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v2
         with:
-          name: build-output-windows
+          name: build-output-windows-backend
 
       - name: Zip the build directory
         run: Compress-Archive -Path exe.win-amd64-3.11 -DestinationPath windows-backend.zip
