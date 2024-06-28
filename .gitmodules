@@ -1,0 +1,6 @@
+[submodule "client/update"]
+	path = client/update
+	url = https://github.com/themw123/python_updater
+[submodule "backend/updater"]
+	path = backend/updater
+	url = https://github.com/themw123/python_updater
