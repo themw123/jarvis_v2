@@ -12,6 +12,7 @@ from assistant.brain import Brain
 from assistant.lifecircle import Lifecircle
 from assistant.stt import Stt
 from assistant.tts import Tts
+from update.updater import Updater
 
 app = FastAPI()
 
@@ -39,6 +40,9 @@ if extension != ".py":
 with open(config_path, 'r', encoding='utf-8') as f:
     server_config = json.load(f)
         
+
+updater = Updater(server_config, "backend")
+updater.run()
 
 @app.post('/init')
 async def init(request: Request):
