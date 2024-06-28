@@ -32,7 +32,7 @@ def main():
     with open(config_path, 'r', encoding='utf-8') as f:
         config = json.load(f)
         
-    updater = Updater(config)
+    updater = Updater(config, "client")
     updater.run()
         
     print("\n- start assistant...")
