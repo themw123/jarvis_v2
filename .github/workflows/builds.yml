@@ -77,7 +77,7 @@ jobs:
         uses: Jimver/cuda-toolkit@v0.2.16
         id: cuda-toolkit
         with:
-          cuda: "12.5.0"
+          cuda: "12.1.0"
 
       - name: Checkout repository
         uses: actions/checkout@v2
