@@ -83,6 +83,7 @@ jobs:
         run: |
           setx CUDA_PATH "%CUDA_PATH%"
           setx CUDA_PATH_V12_4 "%CUDA_PATH%"
+
         env:
           CUDA_PATH: ${{ env.CUDA_PATH }}
 
