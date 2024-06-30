@@ -74,7 +74,9 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Install cuDNN, CUDA, nvCOMP, etc
+        shell: cmd
         run: |
+          cd /d %USERPROFILE%
           echo Installing CUDA, cuDNN, nvCOMP, etc
           curl -LO https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_522.06_windows.exe
           curl -LO https://developer.download.nvidia.com/compute/cuda/12.3.2/local_installers/cuda_12.3.2_546.12_windows.exe
