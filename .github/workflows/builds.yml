@@ -79,18 +79,20 @@ jobs:
         with:
           cuda: "12.4.0"
 
+      - name: Install cuDNN
+        run: |
+          curl -L -o cudnn.zip https://developer.download.nvidia.com/compute/redist/cudnn/v8.9.2/cudnn-12.4-windows-x64-v8.9.2.zip
+          tar -xf cudnn.zip -C cudnn
+          copy cudnn\cuda\bin\*.dll %CUDA_PATH%\bin
+        env:
+          CUDA_PATH: ${{ env.CUDA_PATH }}
+
       - name: Set environment variables
         run: |
           setx CUDA_PATH "%CUDA_PATH%"
           setx CUDA_PATH_V12_4 "%CUDA_PATH%"
-
         env:
           CUDA_PATH: ${{ env.CUDA_PATH }}
-
-      - name: Display CUDA Version
-        run: |
-          echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
-          echo "Cuda install location: ${{steps.cuda-toolkit.outputs.CUDA_PATH}}"
 
       - name: Checkout repository
         uses: actions/checkout@v2
