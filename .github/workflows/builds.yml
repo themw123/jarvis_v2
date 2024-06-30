@@ -79,6 +79,13 @@ jobs:
         with:
           cuda: "12.4.0"
 
+      - name: Set environment variables
+        run: |
+          setx CUDA_PATH "%CUDA_PATH%"
+          setx CUDA_PATH_V12_4 "%CUDA_PATH%"
+        env:
+          CUDA_PATH: ${{ env.CUDA_PATH }}
+
       - name: Display CUDA Version
         run: |
           echo "Installed cuda version is: ${{steps.cuda-toolkit.outputs.cuda}}"
@@ -106,8 +113,6 @@ jobs:
       - name: Build application
         run: |
           cd backend
-          echo %CUDA_PATH%
-          echo %PATH%
           python setup.py build
         shell: cmd
 
