@@ -71,7 +71,7 @@ jobs:
           path: client/build/
 
   windows-backend-build:
-    runs-on: windows-latest
+    runs-on: windows-2019
     steps:
       - name: Install CUDA
         uses: Jimver/cuda-toolkit@v0.2.16
