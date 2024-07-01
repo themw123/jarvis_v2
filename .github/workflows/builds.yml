@@ -78,19 +78,10 @@ jobs:
           setx XXX "YY" /M
         shell: cmd
 
-      - name: Reload Environment Variables
-        run: |
-          $env:XXX = [System.Environment]::GetEnvironmentVariable('XXX', 'Machine')
-        shell: powershell
-
-      - name: Verify and Show Windows System Environment Variable
-        run: |
-          echo here: $env:XXX
-        shell: powershell
-
       - name: Additional Command that Uses the Variable
         run: |
           echo here: %XXX%
+          set
         shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
