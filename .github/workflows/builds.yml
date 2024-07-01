@@ -75,15 +75,12 @@ jobs:
     steps:
       - name: Set Windows System Environment Variable
         run: |
-          [Environment]::SetEnvironmentVariable('MEIN_TEST', 'TestWert', 'Machine')
-          Write-Host "MEIN_TEST Systemvariable gesetzt"
-        shell: powershell
-
-      - name: Reload CMD to Access Environment Variable
-        shell: cmd
+          setx MY_VAR "some_value"
+          shell: cmd
+      - name: Verify environment variable
         run: |
-          setlocal enabledelayedexpansion
-          echo MEIN_TEST: %MEIN_TEST%
+          echo %MY_VAR%
+        shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
         shell: cmd
