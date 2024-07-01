@@ -110,6 +110,9 @@ jobs:
       - name: List cuda_dlls
         run: dir /a /s cuda_dlls
 
+      - name: Check subdirectories
+        run: dir cuda_dlls /ad
+
       - name: Move extracted files to build/exe.win-amd64-3.11/lib/torch/lib
         run: |
           $source = "cuda_dlls\*"
