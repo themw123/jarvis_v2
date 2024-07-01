@@ -73,16 +73,16 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Setze Windows-Systemumgebungsvariable
+      - name: Set Windows System Environment Variable
         run: |
-          [System.Environment]::SetEnvironmentVariable('MEIN_TEST', 'TestWert', [System.EnvironmentVariableTarget]::Machine)
-          refreshenv
+          [Environment]::SetEnvironmentVariable('MEIN_TEST', 'TestWert', 'Machine')
+          Write-Host "MEIN_TEST Systemvariable gesetzt"
         shell: powershell
 
-      - name: Zeige Windows-Systemumgebungsvariable
+      - name: Show Windows System Environment Variable
         run: |
-          $systemValue = [System.Environment]::GetEnvironmentVariable('MEIN_TEST', [System.EnvironmentVariableTarget]::Machine)
-          echo "MEIN_TEST Systemvariable: $systemValue"
+          $systemValue = [Environment]::GetEnvironmentVariable('MEIN_TEST', 'Machine')
+          Write-Host "MEIN_TEST Systemvariable: $systemValue"
         shell: powershell
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
