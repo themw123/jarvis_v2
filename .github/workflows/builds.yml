@@ -75,16 +75,13 @@ jobs:
     steps:
       - name: Set Windows System Environment Variable
         run: |
-          setx MEIN_TEST TestWert /M
-          echo MEIN_TEST Systemvariable gesetzt
-
-          # We need to call `set` within the same session to retrieve the variable
-          call set MEIN_TEST=%MEIN_TEST%
+          setx CUDA_PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
+          echo CUDA_PATH: %CUDA_PATH%
         shell: cmd
 
       - name: Show Windows System Environment Variable
         run: |
-          echo MEIN_TEST Systemvariable: %MEIN_TEST%
+          echo CUDA_PATH: %CUDA_PATH%
         shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
