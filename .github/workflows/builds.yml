@@ -146,7 +146,7 @@ jobs:
       - name: Build application
         run: |
           cd backend
-          python setup.py build
+          python setup.py build --verbose
         shell: cmd
 
       - name: Archive build output
