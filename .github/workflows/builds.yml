@@ -76,7 +76,7 @@ jobs:
       - name: Set Windows System Environment Variable
         run: |
           setx MY_VAR "some_value"
-          shell: cmd
+        shell: cmd
       - name: Verify environment variable
         run: |
           echo %MY_VAR%
