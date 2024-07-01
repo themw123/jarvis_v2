@@ -76,12 +76,13 @@ jobs:
       - name: Set Environment Variable
         shell: cmd
         run: |
-          setx MEIN_TEST "Hallo Welt" /M
+          set MEIN_TEST="Hallo Welt"
+          echo MEIN_TEST: %MEIN_TEST%
 
-      - name: Verify Environment Variable in New Shell
+      - name: Verify Environment Variable
         shell: cmd
         run: |
-          echo %MEIN_TEST%
+          echo MEIN_TEST: %MEIN_TEST%
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
         shell: cmd
