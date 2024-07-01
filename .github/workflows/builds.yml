@@ -123,8 +123,13 @@ jobs:
           setx CUDA_PATH_V12_3 "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
           setx PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%" /M
 
+
+          setx MEIN_TEST "Hallo Welt" /M
+          setx PATH "test" /M
+
           echo CUDA_PATH: %CUDA_PATH%
           echo CUDA_PATH_V12_3: %CUDA_PATH_V12_3%
+          echo MEIN_TEST: %MEIN_TEST%
           echo PATH: %PATH%
           echo Auflisten aller Umgebungsvariablen...
           set
