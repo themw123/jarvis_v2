@@ -75,15 +75,15 @@ jobs:
     steps:
       - name: Set Windows System Environment Variable
         run: |
-          [Environment]::SetEnvironmentVariable('MEIN_TEST', 'TestWert', 'Machine')
-          Write-Host "MEIN_TEST Systemvariable gesetzt"
-        shell: powershell
+          setx MEIN_TEST TestWert /M
+          echo MEIN_TEST Systemvariable gesetzt
+        shell: cmd
 
       - name: Show Windows System Environment Variable
         run: |
-          $systemValue = [Environment]::GetEnvironmentVariable('MEIN_TEST', 'Machine')
-          Write-Host "MEIN_TEST Systemvariable: $systemValue"
-        shell: powershell
+          set MEIN_TEST
+          echo MEIN_TEST Systemvariable: %MEIN_TEST%
+        shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
         shell: cmd
