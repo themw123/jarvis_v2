@@ -75,13 +75,30 @@ jobs:
     steps:
       - name: Set Windows System Environment Variable
         run: |
-          setx CUDA_PATH "xxx" /M
-          echo hier: %CUDA_PATH%
+          setx XXX "YY" /M
         shell: cmd
 
-      - name: Show Windows System Environment Variable
+      - name: Verify and Show Windows System Environment Variable
         run: |
-          echo hier: %CUDA_PATH%
+          echo here: $env:XXX
+        shell: powershell
+
+      - name: Additional Command that Uses the Variable
+        run: |
+          echo here: %XXX%
+        shell: cmd
+
+      - name: Force Reload of Environment Variables
+        run: powershell -Command 'Invoke-Expression -Command [System.Environment]::SetEnvironmentVariable("XXX", $env:XXX, "Machine")'
+
+      - name: Verify and Show Windows System Environment Variable
+        run: |
+          echo here: $env:XXX
+        shell: powershell
+
+      - name: Additional Command that Uses the Variable
+        run: |
+          echo here: %XXX%
         shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
