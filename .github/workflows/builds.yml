@@ -108,7 +108,7 @@ jobs:
         run: 7z x cuda_dlls.7z -ocuda_dlls
 
       - name: List cuda_dlls
-        run: dir cuda_dlls
+        run: dir /a /s cuda_dlls
 
       - name: Move extracted files to build/exe.win-amd64-3.11/lib/torch/lib
         run: |
