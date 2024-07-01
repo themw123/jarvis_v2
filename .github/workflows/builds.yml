@@ -75,11 +75,9 @@ jobs:
     steps:
       - name: Set Windows System Environment Variable
         run: |
-          echo "::set-env name=CUDA_PATH::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
-        shell: cmd
-
-      - name: Set Windows System Environment Variable
-        run: |
+          set "CUDA_PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
+          set "CUDA_PATH_V12_3=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
+          set "PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%"
           echo %CUDA_PATH%
         shell: cmd
 
