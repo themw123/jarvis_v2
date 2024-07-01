@@ -107,8 +107,11 @@ jobs:
       - name: Extract .7z file
         run: 7z x cuda_dlls.7z -ocuda_dlls
 
+      - name: Check current directory
+        run: pwd
+
       - name: List cuda_dlls
-        run: dir /a /s cuda_dlls
+        run: dir cuda_dlls
 
       - name: Check subdirectories
         run: dir cuda_dlls /ad
