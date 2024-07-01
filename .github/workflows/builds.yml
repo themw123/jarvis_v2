@@ -119,30 +119,6 @@ jobs:
           bash -c "sed -i '/device_segmented_sort.cuh/d' 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.3/include/cub/cub.cuh'"
           bash -c "sed -i '/warp_merge_sort.cuh/d' 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.3/include/cub/cub.cuh'"
 
-          setx CUDA_PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
-          setx CUDA_PATH_V12_3 "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
-          setx PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%" /M
-
-
-          setx MEIN_TEST "Hallo Welt" /M
-          setx PATH "test" /M
-
-          echo CUDA_PATH: %CUDA_PATH%
-          echo CUDA_PATH_V12_3: %CUDA_PATH_V12_3%
-          echo MEIN_TEST: %MEIN_TEST%
-          echo PATH: %PATH%
-          echo Auflisten aller Umgebungsvariablen...
-          set
-
-      - name: Check CUDA installation
-        shell: cmd
-        run: |
-          echo CUDA_PATH: %CUDA_PATH%
-          echo CUDA_PATH_V12_3: %CUDA_PATH_V12_3%
-          echo PATH: %PATH%
-          echo Auflisten aller Umgebungsvariablen...
-          set
-
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
