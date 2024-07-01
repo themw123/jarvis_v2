@@ -73,11 +73,10 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Set Environment Variable
-        shell: cmd
+      - name: Setze Systemumgebungsvariable
         run: |
-          set MEIN_TEST=Hallo Welt
-          echo MEIN_TEST gesetzt: %MEIN_TEST%
+          [System.Environment]::SetEnvironmentVariable('MEIN_TEST', 'Wert', [System.EnvironmentVariableTarget]::Machine)
+        shell: powershell
 
       - name: Verify Environment Variable
         shell: cmd
