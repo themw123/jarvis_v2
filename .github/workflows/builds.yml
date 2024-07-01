@@ -124,6 +124,18 @@ jobs:
           set "PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%"
           echo CUDA Version 12.3.2>"%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\version.txt"
 
+          echo "::set-env name=CUDA_PATH::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
+          echo "::set-env name=CUDA_PATH_V12_3::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
+          echo "::add-path::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin"
+          echo "::add-path::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp"
+
+      - name: Check CUDA installation
+        shell: cmd
+        run: |
+          echo CUDA_PATH: %CUDA_PATH%
+          echo CUDA_PATH_V12_3: %CUDA_PATH_V12_3%
+          dir "%CUDA_PATH%"
+
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
