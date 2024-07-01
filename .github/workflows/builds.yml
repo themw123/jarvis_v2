@@ -75,13 +75,13 @@ jobs:
     steps:
       - name: Set Windows System Environment Variable
         run: |
-          setx CUDA_PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
-          echo CUDA_PATH: %CUDA_PATH%
+          setx CUDA_PATH "xxx" /M
+          echo %CUDA_PATH%
         shell: cmd
 
       - name: Show Windows System Environment Variable
         run: |
-          echo CUDA_PATH: %CUDA_PATH%
+          echo %CUDA_PATH%
         shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
