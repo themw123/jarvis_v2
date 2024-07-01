@@ -73,10 +73,11 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Set Environment Variable
+      - name: Set Environment Variable in PowerShell
         shell: powershell
         run: |
-          Write-Host "MEIN_TEST=TestWert" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+          [Environment]::SetEnvironmentVariable('MEIN_TEST', 'TestWert', 'Machine')
+          echo "MEIN_TEST=TestWert" >> $env:GITHUB_ENV
           Write-Host "MEIN_TEST Systemvariable gesetzt"
 
       - name: Access Environment Variable in CMD
