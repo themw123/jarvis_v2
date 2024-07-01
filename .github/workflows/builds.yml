@@ -77,7 +77,6 @@ jobs:
         shell: cmd
         run: |
           echo MEIN_TEST=Hallo Welt >> %GITHUB_ENV%
-          echo MEIN_TEST: %MEIN_TEST%
 
       - name: Test3
         shell: cmd
