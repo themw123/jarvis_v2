@@ -73,14 +73,15 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Test
+      - name: Set Environment Variable
         shell: cmd
         run: |
-          set MEIN_TEST=Hallo Welt
-      - name: Test
+          setx MEIN_TEST "Hallo Welt" /M
+
+      - name: Verify Environment Variable in New Shell
         shell: cmd
         run: |
-          echo MEIN_TEST: %MEIN_TEST%
+          echo %MEIN_TEST%
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
         shell: cmd
