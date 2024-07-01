@@ -119,14 +119,15 @@ jobs:
           bash -c "sed -i '/device_segmented_sort.cuh/d' 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.3/include/cub/cub.cuh'"
           bash -c "sed -i '/warp_merge_sort.cuh/d' 'C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.3/include/cub/cub.cuh'"
 
-          set "CUDA_PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
-          set "CUDA_PATH_V12_3=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
-          set "PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%"
-          echo CUDA Version 12.3.2>"%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\version.txt"
-
           setx CUDA_PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
           setx CUDA_PATH_V12_3 "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
           setx PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%" /M
+
+          echo CUDA_PATH: %CUDA_PATH%
+          echo CUDA_PATH_V12_3: %CUDA_PATH_V12_3%
+          echo PATH: %PATH%
+          echo Auflisten aller Umgebungsvariablen...
+          set
 
       - name: Check CUDA installation
         shell: cmd
