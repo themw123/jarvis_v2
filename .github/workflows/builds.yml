@@ -73,14 +73,16 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Setze globale Umgebungsvariable
+      - name: Setze Windows-Systemumgebungsvariable
         run: |
-          echo "MEIN_TEST=TestWert" >> $GITHUB_ENV
-        shell: bash
+          [System.Environment]::SetEnvironmentVariable('MEIN_TEST', 'TestWert', [System.EnvironmentVariableTarget]::Machine)
+          refreshenv
+        shell: powershell
 
-      - name: Zeige globale Umgebungsvariable
+      - name: Zeige Windows-Systemumgebungsvariable
         run: |
-          echo "MEIN_TEST global: $env:MEIN_TEST"
+          $systemValue = [System.Environment]::GetEnvironmentVariable('MEIN_TEST', [System.EnvironmentVariableTarget]::Machine)
+          echo "MEIN_TEST Systemvariable: $systemValue"
         shell: powershell
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
