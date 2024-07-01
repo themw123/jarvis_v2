@@ -73,14 +73,6 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Set Windows System Environment Variable
-        run: |
-          set "CUDA_PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
-          set "CUDA_PATH_V12_3=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
-          set "PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%"
-          echo %CUDA_PATH%
-        shell: cmd
-
       - name: Install cuDNN, CUDA, nvCOMP, etc
         shell: cmd
         run: |
@@ -170,8 +162,14 @@ jobs:
           pip install transformers==4.40.1
         shell: bash
 
+      # windows system variables needs to be set in the same step, otherwise they are not available
       - name: Build application
         run: |
+
+          set "CUDA_PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
+          set "CUDA_PATH_V12_3=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
+          set "PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%"
+
           cd backend
           python setup.py build --verbose
         shell: cmd
