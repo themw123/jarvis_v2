@@ -76,7 +76,7 @@ jobs:
       - name: Test
         shell: cmd
         run: |
-          set MEIN_TEST "Hallo Welt"
+          set MEIN_TEST=Hallo Welt
       - name: Test
         shell: cmd
         run: |
