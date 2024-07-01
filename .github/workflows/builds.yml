@@ -80,6 +80,11 @@ jobs:
           call refreshenv
           echo MEIN_TEST: %MEIN_TEST%
 
+      - name: Test2
+        shell: cmd
+        run: |
+          echo MEIN_TEST: %MEIN_TEST%
+
       - name: Install cuDNN, CUDA, nvCOMP, etc
         shell: cmd
         run: |
