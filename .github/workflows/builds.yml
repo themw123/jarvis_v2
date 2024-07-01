@@ -73,15 +73,14 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Setze und überprüfe Umgebungsvariable
+      - name: Setze globale Umgebungsvariable
         run: |
-          $env:MEIN_TEST = "TestWert"
-          echo "MEIN_TEST direkt nach dem Setzen: $env:MEIN_TEST"
-        shell: powershell
+          echo "MEIN_TEST=TestWert" >> $GITHUB_ENV
+        shell: bash
 
-      - name: Zeige Umgebungsvariable
+      - name: Zeige globale Umgebungsvariable
         run: |
-          echo "MEIN_TEST in neuem Schritt: $env:MEIN_TEST"
+          echo "MEIN_TEST global: $env:MEIN_TEST"
         shell: powershell
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
