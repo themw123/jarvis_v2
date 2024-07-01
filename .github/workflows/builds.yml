@@ -133,7 +133,7 @@ jobs:
         run: |
           echo CUDA_PATH: %CUDA_PATH%
           echo CUDA_PATH_V12_3: %CUDA_PATH_V12_3%
-          dir "%CUDA_PATH%"
+          echo PATH: %PATH%
           echo Auflisten aller Umgebungsvariablen...
           set
 
