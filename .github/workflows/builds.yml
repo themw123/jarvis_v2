@@ -78,18 +78,10 @@ jobs:
           setx XXX "YY" /M
         shell: cmd
 
-      - name: Verify and Show Windows System Environment Variable
+      - name: Reload Environment Variables
         run: |
-          echo here: $env:XXX
+          $env:XXX = [System.Environment]::GetEnvironmentVariable('XXX', 'Machine')
         shell: powershell
-
-      - name: Additional Command that Uses the Variable
-        run: |
-          echo here: %XXX%
-        shell: cmd
-
-      - name: Force Reload of Environment Variables
-        run: powershell -Command 'Invoke-Expression -Command [System.Environment]::SetEnvironmentVariable("XXX", $env:XXX, "Machine")'
 
       - name: Verify and Show Windows System Environment Variable
         run: |
