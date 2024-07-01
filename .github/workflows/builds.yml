@@ -73,12 +73,11 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Set env
-        run: echo "MEIN_TEST=Hallo Welt" >> $GITHUB_ENV
-
       - name: Test
         shell: cmd
         run: |
+          setx MEIN_TEST "Hallo Welt" /M
+          call refreshenv
           echo MEIN_TEST: %MEIN_TEST%
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
