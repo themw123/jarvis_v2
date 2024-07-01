@@ -73,17 +73,17 @@ jobs:
   windows-backend-build:
     runs-on: windows-2019
     steps:
-      - name: Set Environment Variable in PowerShell
-        shell: powershell
+      - name: Set Windows System Environment Variable
         run: |
           [Environment]::SetEnvironmentVariable('MEIN_TEST', 'TestWert', 'Machine')
-          echo "MEIN_TEST=TestWert" >> $env:GITHUB_ENV
           Write-Host "MEIN_TEST Systemvariable gesetzt"
+        shell: powershell
 
-      - name: Access Environment Variable in CMD
+      - name: Reload CMD to Access Environment Variable
         shell: cmd
         run: |
-          echo %MEIN_TEST%
+          setlocal enabledelayedexpansion
+          echo MEIN_TEST: %MEIN_TEST%
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
         shell: cmd
