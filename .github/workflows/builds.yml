@@ -75,13 +75,8 @@ jobs:
     steps:
       - name: Set Windows System Environment Variable
         run: |
-          [Environment]::SetEnvironmentVariable('XXX', 'TestWert', 'Machine')
-        shell: powershell
-
-      - name: Additional Command that Uses the Variable
-        run: |
+          set XXX "YY" /M
           echo here: %XXX%
-          set
         shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
