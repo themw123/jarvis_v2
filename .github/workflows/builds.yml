@@ -124,10 +124,14 @@ jobs:
           set "PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%"
           echo CUDA Version 12.3.2>"%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\version.txt"
 
-          echo "::set-env name=CUDA_PATH::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
-          echo "::set-env name=CUDA_PATH_V12_3::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3"
-          echo "::add-path::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin"
-          echo "::add-path::%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp"
+          echo "CUDA_PATH=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" >> $GITHUB_ENV
+          echo "CUDA_PATH_V12_3=%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" >> $GITHUB_ENV
+          echo "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin" >> $GITHUB_PATH
+          echo "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp" >> $GITHUB_PATH
+
+          setx CUDA_PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
+          setx CUDA_PATH_V12_3 "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3" /M
+          setx PATH "%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\bin;%ProgramFiles%\NVIDIA GPU Computing Toolkit\CUDA\v12.3\libnvvp;%PATH%" /M
 
       - name: Check CUDA installation
         shell: cmd
