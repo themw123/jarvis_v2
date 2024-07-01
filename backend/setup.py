@@ -3,6 +3,13 @@ import sys
 import os
 sys.setrecursionlimit(5000)
 
+# Abrufen der Umgebungsvariablen
+cuda_path = os.getenv('CUDA_PATH')
+cuda_path_v12_3 = os.getenv('CUDA_PATH_V12_3')
+
+print(f"CUDA_PATH: {cuda_path}")
+print(f"CUDA_PATH_V12_3: {cuda_path_v12_3}")
+
 
 if not os.path.exists('temp_audio'):
     os.makedirs('temp_audio')
