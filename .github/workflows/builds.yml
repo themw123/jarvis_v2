@@ -107,18 +107,12 @@ jobs:
       - name: Extract .7z file
         run: 7z x cuda_dlls.7z -ocuda_dlls
 
-      - name: Check current directory
-        run: pwd
-
       - name: List cuda_dlls
-        run: dir cuda_dlls
-
-      - name: Check subdirectories
-        run: dir cuda_dlls /ad
+        run: dir cuda_dlls/cuda_dlls
 
       - name: Move extracted files to build/exe.win-amd64-3.11/lib/torch/lib
         run: |
-          $source = "cuda_dlls\*"
+          $source = "cuda_dlls\cuda_dlls\*"
           $destination = "backend\build\exe.win-amd64-3.11\lib\torch\lib"
           Move-Item -Path $source -Destination $destination -Force
           Remove-Item cuda_dlls.7z -Force
