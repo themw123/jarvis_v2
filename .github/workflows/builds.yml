@@ -75,8 +75,8 @@ jobs:
     steps:
       - name: Set Windows System Environment Variable
         run: |
-          set XXX "YY" /M
-          echo here: %XXX%
+          setx XXX "YY" /M
+          echo "here: %XXX%"
         shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
