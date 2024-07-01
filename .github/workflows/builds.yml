@@ -78,10 +78,10 @@ jobs:
           [System.Environment]::SetEnvironmentVariable('MEIN_TEST', 'Wert', [System.EnvironmentVariableTarget]::Machine)
         shell: powershell
 
-      - name: Zeige Umgebungsvariable (CMD)
+      - name: Zeige Umgebungsvariable
         run: |
-          echo MEIN_TEST abgerufen: %MEIN_TEST%
-        shell: cmd
+          echo "MEIN_TEST abgerufen: $env:MEIN_TEST"
+        shell: powershell
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
         shell: cmd
