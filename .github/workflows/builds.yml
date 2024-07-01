@@ -77,11 +77,13 @@ jobs:
         run: |
           setx MEIN_TEST TestWert /M
           echo MEIN_TEST Systemvariable gesetzt
+
+          # We need to call `set` within the same session to retrieve the variable
+          call set MEIN_TEST=%MEIN_TEST%
         shell: cmd
 
       - name: Show Windows System Environment Variable
         run: |
-          set MEIN_TEST
           echo MEIN_TEST Systemvariable: %MEIN_TEST%
         shell: cmd
 
