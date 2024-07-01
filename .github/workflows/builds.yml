@@ -76,12 +76,12 @@ jobs:
       - name: Set Windows System Environment Variable
         run: |
           setx CUDA_PATH "xxx" /M
-          echo %CUDA_PATH%
+          echo hier: %CUDA_PATH%
         shell: cmd
 
       - name: Show Windows System Environment Variable
         run: |
-          echo %CUDA_PATH%
+          echo hier: %CUDA_PATH%
         shell: cmd
 
       - name: Install cuDNN, CUDA, nvCOMP, etc
