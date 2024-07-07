@@ -117,8 +117,9 @@ jobs:
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-      - name: Set release SHA
-        run: echo "SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - name: Set Tag Name
+        id: extract_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
@@ -126,7 +127,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: Release-${{ env.SHA }}
+          tag_name: ${{ env.TAG_NAME }}
           release_name: Releases
           draft: false
           prerelease: false
