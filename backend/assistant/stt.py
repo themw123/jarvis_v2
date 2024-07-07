@@ -7,7 +7,8 @@ import speech_recognition as sr
 from speech_recognition import AudioData, Recognizer
 
 from assistant.lifecircle import Lifecircle
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+
 
 class Stt:
 
@@ -18,28 +19,29 @@ class Stt:
             print('\n- starting whisper_local model')
             device = "cuda" if self.server_config["stt"]["whisper_local"]["gpu"] else "cpu"
             compute_type = "float16" if device == "cuda" else "int8"
-            
+
             self.model = WhisperModel(
-                model_size_or_path=self.server_config["stt"]["whisper_local"]["location"] + self.client_config["stt"]["whisper_local_model"],
+                model_size_or_path=self.server_config["stt"]["whisper_local"]["location"] +
+                self.client_config["stt"]["whisper_local_model"],
                 device=device,
                 compute_type=compute_type
             )
             # wake up the model
             current_dir = os.path.dirname(os.path.realpath(__file__))
-            wakeup_path = os.path.abspath(os.path.join(current_dir, "..","wakeup.wav"))
-            
+            wakeup_path = os.path.abspath(
+                os.path.join(current_dir, "..", "wakeup.wav"))
+
             program_name = sys.argv[0]
             extension = os.path.splitext(program_name)[1]
 
             if extension != ".py":
-                wakeup_path = os.path.abspath(os.path.join(current_dir, "..", "..","wakeup.wav"))
+                wakeup_path = os.path.abspath(os.path.join(
+                    current_dir, "..", "..", "wakeup.wav"))
             for segment in self.model.transcribe(
                 audio=wakeup_path,
                 beam_size=5
             ):
                 pass
-    
-
 
     def stt_wrapper(self, audio: AudioData):
         if self.client_config["stt"]["active"] == "whisper_local":
@@ -50,12 +52,13 @@ class Stt:
             r = Recognizer()
             text = self.__stt_google(r, audio)
         else:
-            raise Exception(self.client_config["stt"]["active"] + ": This stt api type does not exist") 
-        
+            raise Exception(
+                self.client_config["stt"]["active"] + ": This stt api type does not exist")
+
         text = text.replace("\n", "")
-        
+
         return text
-    
+
     def __stt_whisper_local(self, audio: AudioData):
 
         try:
@@ -76,15 +79,15 @@ class Stt:
                         break
                     text += segment.text + " "
                 return text.strip()
-                
+
         except IOError as e:
             raise Exception(e)
         except Exception as e:
             raise Exception(e)
         finally:
             temp_file.close()
-            os.remove(temp_file.name)  
-                
+            os.remove(temp_file.name)
+
     def __stt_whisper(self, audio: AudioData):
 
         try:
@@ -100,11 +103,11 @@ class Stt:
                     api_key=self.server_config["brain"]["chatgpt"]["api_key"],
                 )
                 text = client.audio.transcriptions.create(
-                    file = audio_file,
-                    model = "whisper-1",
+                    file=audio_file,
+                    model="whisper-1",
                     response_format="text",
                     language=self.server_config["stt"]["whisper"]["language"],
-                    
+
                 )
             return text
         except IOError as e:
@@ -113,22 +116,19 @@ class Stt:
             raise Exception(e)
         finally:
             temp_file.close()
-            os.remove(temp_file.name)    
-                
-    
-    
+            os.remove(temp_file.name)
+
     def __stt_google(self, r: Recognizer, audio: AudioData):
         try:
-            #nur google ist ohne api key.
-            result = r.recognize_google(audio, language=self.server_config["stt"]["google"]["language"])
+            # nur google ist ohne api key.
+            result = r.recognize_google(
+                audio, language=self.server_config["stt"]["google"]["language"])
             if result is not None:
                 return result
             else:
-                return "" 
+                return ""
 
         except sr.UnknownValueError:
             return ""
         except sr.RequestError:
             return ""
-
-    

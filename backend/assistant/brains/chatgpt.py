@@ -12,25 +12,23 @@ class Chatgpt:
         self.server_config = server_config
         self.client_config = client_config
         self.messages = self_messages
-            
+
     def ask_wrapper(self):
         return self.__ask_generator()
 
-
-    
     def __ask_generator(self):
         try:
             client = OpenAI(
                 api_key=self.server_config["brain"]["chatgpt"]["api_key"],
 
-            )         
-          
+            )
+
             stream = client.chat.completions.create(
                 model=self.client_config["brain"]["openai_model"],
                 messages=self.messages,
                 stream=True,
             )
-            
+
             full_response = ""
             for chunk in stream:
                 if Lifecircle.interrupted:
@@ -45,6 +43,6 @@ class Chatgpt:
 
         except Exception as e:
             raise Exception("ChatGPT: API, failed")
-              
+
     def __reset__colorama(self):
         print(colorama.Style.RESET_ALL)

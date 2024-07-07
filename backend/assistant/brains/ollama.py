@@ -11,22 +11,22 @@ class Ollama:
         self.client_config = client_config
         self.messages = messages
         if self.client_config["brain"]["active"] == "ollama":
-            self.client = Client(host=self.server_config["brain"]["ollama"]["url"])
+            self.client = Client(
+                host=self.server_config["brain"]["ollama"]["url"])
             self.__wakeup_ollama()
 
-            
     def ask_wrapper(self):
         return self.__ask_generator()
 
     def __ask_generator(self):
-        try:            
+        try:
             stream = self.client.chat(
                 model=self.client_config["brain"]["ollama_model"],
                 messages=self.messages,
                 stream=True,
                 keep_alive=self.server_config["brain"]["ollama"]["keep_alive"],
             )
-            
+
             full_response = ""
             for chunk in stream:
                 if Lifecircle.interrupted:

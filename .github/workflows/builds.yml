@@ -2,9 +2,8 @@ name: Build and Release
 
 on:
   push:
-    branches:
-      - server-client
-  workflow_dispatch:
+    tags:
+      - "v*"
 
 jobs:
   linux-client-build:

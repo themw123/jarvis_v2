@@ -10,13 +10,14 @@ class GroqClass:
         self.server_config = server_config
         self.client_config = client_config
         self.messages = messages
-        self.client = Groq(api_key=self.server_config["brain"]["groq"]["api_key"])
+        self.client = Groq(
+            api_key=self.server_config["brain"]["groq"]["api_key"])
 
     def ask_wrapper(self):
         return self.__ask_generator()
 
     def __ask_generator(self):
-        try:            
+        try:
             stream = self.client.chat.completions.create(
                 model=self.client_config["brain"]["groq_model"],
                 messages=self.messages,
@@ -26,7 +27,7 @@ class GroqClass:
                 stream=True,
                 stop=None,
             )
-            
+
             full_response = ""
             for chunk in stream:
                 if Lifecircle.interrupted:

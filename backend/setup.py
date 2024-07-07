@@ -6,16 +6,15 @@ sys.setrecursionlimit(5000)
 if not os.path.exists('temp_audio'):
     os.makedirs('temp_audio')
 open('temp_audio/.keep', 'a').close()
-    
-executables = [Executable("main.py", icon="img/ai.ico", target_name="assisstant")]
+
+executables = [Executable("main.py", icon="img/ai.ico",
+                          target_name="assisstant")]
 
 options = {
     'build_exe': {
         'include_msvcr': True,
         'packages': ["srsly", "blis", "spacy", "deepspeed", "uvicorn", "sklearn"],
         'include_files': ["example.config.json", "temp_audio", "img", "wakeup.wav"],
-        #for github action windows image. api-ms not needed
-        'excludes': ['api-ms-*'],
     }
 }
 

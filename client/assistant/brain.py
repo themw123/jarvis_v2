@@ -6,17 +6,18 @@ from assistant.player import Player
 
 
 class Brain:
-    
+
     def __init__(self, config):
         self.config = config
-        self.messages = [ {"role": "system", "content": self.config["chat"]["role"]} ]
+        self.messages = [
+            {"role": "system", "content": self.config["chat"]["role"]}]
 
-        
     def request_backend_brain(self, stt):
         url = self.config["backend"]["api"]+'/brain'
         headers = {'Content-Type': 'application/json'}
-        data = {'stt': stt} 
-        response = requests.post(url, headers=headers, data=json.dumps(data), stream=True)
+        data = {'stt': stt}
+        response = requests.post(url, headers=headers,
+                                 data=json.dumps(data), stream=True)
         if response.status_code != 200:
             raise SystemExit("- Brain failed")
         Player.play_wait()
@@ -25,5 +26,5 @@ class Brain:
             if brain_text != "__END__ ":
                 Player.pause()
                 print(brain_text, end="", flush=True)
-            yield brain_text 
+            yield brain_text
         print(colorama.Style.RESET_ALL)

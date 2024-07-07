@@ -1,3 +1,2 @@
 class Lifecircle:
-    interrupted = False        
-        
+    interrupted = False
