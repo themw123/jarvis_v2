@@ -1,3 +1,4 @@
 {
-  "python.analysis.extraPaths": ["./client"]
+  "python.analysis.extraPaths": ["./client"],
+  "java.project.sourcePaths": ["client"]
 }

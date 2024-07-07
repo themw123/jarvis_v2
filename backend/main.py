@@ -1,5 +1,6 @@
 
 import os
+import sys
 import uvicorn
 import json
 from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
@@ -11,6 +12,8 @@ from assistant.brain import Brain
 from assistant.lifecircle import Lifecircle
 from assistant.stt import Stt
 from assistant.tts import Tts
+from extract.extracter import Extracter
+from update.updater import Updater
 
 app = FastAPI()
 
@@ -28,13 +31,24 @@ tts: Tts = None
 current_dir = os.path.dirname(os.path.realpath(__file__))
 config_path = os.path.join(current_dir, "config.json")
 
-if 'lib' in current_dir:
+program_name = sys.argv[0]
+extension = os.path.splitext(program_name)[1]
+
+if extension != ".py":
     config_path = os.path.abspath(os.path.join(current_dir, "..", "..", "config.json"))
 
 
 with open(config_path, 'r', encoding='utf-8') as f:
     server_config = json.load(f)
-        
+  
+
+updater = Updater(server_config, "backend")
+updater.run()
+
+
+extracter = Extracter(server_config)
+extracter.run()
+
 
 @app.post('/init')
 async def init(request: Request):

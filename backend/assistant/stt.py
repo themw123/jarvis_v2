@@ -1,4 +1,5 @@
 import os
+import sys
 import tempfile
 from faster_whisper import WhisperModel
 from openai import OpenAI
@@ -26,7 +27,11 @@ class Stt:
             # wake up the model
             current_dir = os.path.dirname(os.path.realpath(__file__))
             wakeup_path = os.path.abspath(os.path.join(current_dir, "..","wakeup.wav"))
-            if 'lib' in current_dir:
+            
+            program_name = sys.argv[0]
+            extension = os.path.splitext(program_name)[1]
+
+            if extension != ".py":
                 wakeup_path = os.path.abspath(os.path.join(current_dir, "..", "..","wakeup.wav"))
             for segment in self.model.transcribe(
                 audio=wakeup_path,

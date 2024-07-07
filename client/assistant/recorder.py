@@ -178,7 +178,8 @@ class Recorder:
                 try:
                     self.websocket.send_bytes(self.stream_wakeword.read(self.chunk))
                     prediction = float(self.websocket.recv())
-                except:
+                except Exception as e:
+                    print(e)
                     prediction = 0.0
                 if prediction > self.config["openwakeword"]["threshold"] and not prediction_has_wakeword: 
                     prediction_has_wakeword = True

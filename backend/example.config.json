@@ -1,4 +1,6 @@
 {
+  "description": "Do not change version, leave it as it is.",
+  "version": "0",
   "brain": {
     "ollama": {
       "description": "You need to install Ollama by yourself and have it running.",
