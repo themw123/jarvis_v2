@@ -15,6 +15,7 @@ class Recorder:
     def __init__(self, config):
         self.websocket = None
         self.config = config
+        self.url = self.config["backend"]["api"].replace("http://", "ws://")
         self.stream = None
         self.stream_wakeword = None
         self.p = pyaudio.PyAudio()
@@ -152,8 +153,7 @@ class Recorder:
             self.__after_recording()
 
     def connect(self):
-        url = self.config["backend"]["api"].replace("http://", "ws://")
-        self.websocket = create_connection(url+"/wakeword")
+        self.websocket = create_connection(self.url+"/wakeword")
 
     def listen_on_voice(self):
         self.connect()
@@ -176,6 +176,7 @@ class Recorder:
                 except Exception as e:
                     print(e)
                     prediction = 0.0
+                    self.connect()
                 if prediction > self.config["openwakeword"]["threshold"] and not prediction_has_wakeword:
                     prediction_has_wakeword = True
                     self.recording = True
