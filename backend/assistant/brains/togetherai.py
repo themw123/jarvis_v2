@@ -1,0 +1,43 @@
+import colorama
+from together import Together
+
+from assistant.lifecircle import Lifecircle
+
+
+class TogetherAi:
+
+    def __init__(self, server_config, client_config, messages: list):
+        self.server_config = server_config
+        self.client_config = client_config
+        self.messages = messages
+        self.client = Together(
+            api_key=self.server_config["brain"]["togetherai"]["api_key"])
+
+    def ask_wrapper(self):
+        return self.__ask_generator()
+
+    def __ask_generator(self):
+        try:
+            stream = self.client.chat.completions.create(
+                model=self.client_config["brain"]["togetherai_model"],
+                messages=self.messages,
+                stream=True,
+            )
+
+            full_response = ""
+            for chunk in stream:
+                if Lifecircle.interrupted:
+                    break
+                if chunk.choices[0].delta.content is not None:
+                    content = chunk.choices[0].delta.content
+                    full_response += content
+                    yield content
+            self.messages.append({'role': 'system', 'content': full_response})
+            print()
+            self.__reset__colorama()
+
+        except Exception as e:
+            raise Exception(e)
+
+    def __reset__colorama(self):
+        print(colorama.Style.RESET_ALL)

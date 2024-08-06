@@ -3,6 +3,7 @@ import tiktoken
 
 from assistant.brains.chatgpt import Chatgpt
 from assistant.brains.ollama import Ollama
+from assistant.brains.togetherai import TogetherAi
 from assistant.brains.groq import GroqClass
 
 
@@ -16,6 +17,8 @@ class Brain:
         self.messages_tokens = []
         self.messages_tokens_sum = 0
         self.ollama = Ollama(server_config, client_config, self.messages)
+        self.togetherai = TogetherAi(
+            server_config, client_config, self.messages)
         self.groq = GroqClass(server_config, client_config, self.messages)
         self.chatgpt = Chatgpt(server_config, client_config, self.messages)
 
@@ -26,6 +29,8 @@ class Brain:
         self.__check_max_tokens()
         if self.client_config["brain"]["active"] == "ollama":
             return self.__stream_sentences_from_chunks(self.ollama.ask_wrapper())
+        elif self.client_config["brain"]["active"] == "togetherai":
+            return self.__stream_sentences_from_chunks(self.togetherai.ask_wrapper())
         elif self.client_config["brain"]["active"] == "groq":
             return self.__stream_sentences_from_chunks(self.groq.ask_wrapper())
         elif self.client_config["brain"]["active"] == "chatgpt":

@@ -7,6 +7,9 @@
       "url": "http://localhost:11434",
       "keep_alive": "60m"
     },
+    "togetherai": {
+      "api_key": "xxx"
+    },
     "groq": {
       "api_key": "gsk_"
     },
